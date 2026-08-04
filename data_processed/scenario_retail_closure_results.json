@@ -1,0 +1,344 @@
+{
+ "framing": "의사결정 지원용 what-if 분석 (검증된 예측 모델 아님)",
+ "scenario": "대형유통 폐점 (서대전점 2024-05 / 세이본점 2024-05-19 / 문화점 2026-01)",
+ "metric_note": "본 모델은 혼잡 피드백이 없어 수요 소멸은 travel_time을 바꾸지 않음 — 회복탄력성(지연) 지표가 아니라 **물류 지형 변화** 지표임",
+ "parameters": {
+  "retail_demand_share_f": {
+   "values_swept": [
+    0.3,
+    0.4,
+    0.5
+   ],
+   "representative": 0.4,
+   "assumption": true,
+   "note": "[가정치] 프록시2: 해당 행정동 물동량 중 지점 흡수 비중. 프록시1(면적당 물동량)은 자료 없음 [확인 필요]"
+  },
+  "sei_share_of_complex": {
+   "value": 0.5,
+   "assumption": true,
+   "note": "[가정치] 문화+세이 복합 수요 중 세이 지분"
+  }
+ },
+ "sites": {
+  "서대전점": {
+   "lat": 36.313703,
+   "lng": 127.319001,
+   "dong": "관저1동"
+  },
+  "문화+세이 복합": {
+   "lat": 36.3204613729481,
+   "lng": 127.408246057071,
+   "dong": "오류동"
+  }
+ },
+ "composite_note": "클러스터1 = 문화점+세이본점(인접·지하통로 연결, 복합 1지점). 서대전점은 유성구 대정동(모다아울렛 옆) 독립 지점으로 해당 동 f-지분 100% — 언론보도+공식 앱 대조로 좌표 확정(2026-07-19)",
+ "removed_demand_veh_day": {
+  "T0_폐점전": {
+   "f=0.3": {
+    "서대전점": 0.0,
+    "문화+세이 복합": 0.0
+   },
+   "f=0.4": {
+    "서대전점": 0.0,
+    "문화+세이 복합": 0.0
+   },
+   "f=0.5": {
+    "서대전점": 0.0,
+    "문화+세이 복합": 0.0
+   }
+  },
+  "T1_2024-05": {
+   "f=0.3": {
+    "서대전점": 237.2,
+    "문화+세이 복합": 94.7
+   },
+   "f=0.4": {
+    "서대전점": 316.3,
+    "문화+세이 복합": 126.3
+   },
+   "f=0.5": {
+    "서대전점": 395.4,
+    "문화+세이 복합": 157.9
+   }
+  },
+  "T2_2026-01": {
+   "f=0.3": {
+    "서대전점": 237.2,
+    "문화+세이 복합": 189.5
+   },
+   "f=0.4": {
+    "서대전점": 316.3,
+    "문화+세이 복합": 252.6
+   },
+   "f=0.5": {
+    "서대전점": 395.4,
+    "문화+세이 복합": 315.8
+   }
+  }
+ },
+ "top10_load_reduction_edges_f0.4_T2": [
+  {
+   "edge": "562808475_382917309",
+   "road": "대정로",
+   "highway": "tertiary",
+   "load_before": 299.6,
+   "load_after": 0.0,
+   "reduction_abs": 299.6,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "8946186851_562808475",
+   "road": "['대정로', '대정남로']",
+   "highway": "tertiary",
+   "load_before": 299.6,
+   "load_after": 0.0,
+   "reduction_abs": 299.6,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "436816948_599910187",
+   "road": "계룡로904번길",
+   "highway": "residential",
+   "load_before": 152.2,
+   "load_after": 0.0,
+   "reduction_abs": 152.2,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "599910228_436816948",
+   "road": "계백로1686번길",
+   "highway": "residential",
+   "load_before": 152.2,
+   "load_after": 0.0,
+   "reduction_abs": 152.2,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "436816949_599910187",
+   "road": "계룡로904번길",
+   "highway": "residential",
+   "load_before": 100.4,
+   "load_after": 0.0,
+   "reduction_abs": 100.4,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "307687729_436816949",
+   "road": "계룡로904번길",
+   "highway": "residential",
+   "load_before": 100.4,
+   "load_after": 0.0,
+   "reduction_abs": 100.4,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "599910285_307687729",
+   "road": "계룡로904번길",
+   "highway": "residential",
+   "load_before": 100.4,
+   "load_after": 0.0,
+   "reduction_abs": 100.4,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "599910286_599910285",
+   "road": "계룡로904번길",
+   "highway": "residential",
+   "load_before": 100.4,
+   "load_after": 0.0,
+   "reduction_abs": 100.4,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "599910206_599910286",
+   "road": "계룡로904번안길",
+   "highway": "residential",
+   "load_before": 100.4,
+   "load_after": 0.0,
+   "reduction_abs": 100.4,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "599910218_599910206",
+   "road": "계룡로904번안길",
+   "highway": "residential",
+   "load_before": 100.4,
+   "load_after": 0.0,
+   "reduction_abs": 100.4,
+   "reduction_pct": 100.0
+  }
+ ],
+ "greedy_on_remaining_demand": {
+  "baseline_objective_veh_h_day": 36755.4,
+  "picks": [
+   {
+    "segment_id": "318361357_559374636_0",
+    "highway": "residential",
+    "length_m": 412.8,
+    "marginal_gain_veh_h_day": 75.97,
+    "coord_a": [
+     36.3331268,
+     127.3865692
+    ],
+    "coord_b": [
+     36.3357998,
+     127.3833715
+    ]
+   },
+   {
+    "segment_id": "559374632_559374639_0",
+    "highway": "residential",
+    "length_m": 144.5,
+    "marginal_gain_veh_h_day": 56.25,
+    "coord_a": [
+     36.333582,
+     127.3829318
+    ],
+    "coord_b": [
+     36.3345364,
+     127.3818375
+    ]
+   },
+   {
+    "segment_id": "559374637_559374639_0",
+    "highway": "residential",
+    "length_m": 133.4,
+    "marginal_gain_veh_h_day": 38.9,
+    "coord_a": [
+     36.3353942,
+     127.3828788
+    ],
+    "coord_b": [
+     36.3345364,
+     127.3818375
+    ]
+   },
+   {
+    "segment_id": "382917291_382917292_0",
+    "highway": "residential",
+    "length_m": 372.1,
+    "marginal_gain_veh_h_day": 28.67,
+    "coord_a": [
+     36.3165256,
+     127.3199401
+    ],
+    "coord_b": [
+     36.3165632,
+     127.3240908
+    ]
+   },
+   {
+    "segment_id": "388475791_388475837_0",
+    "highway": "residential",
+    "length_m": 1215.8,
+    "marginal_gain_veh_h_day": 25.77,
+    "coord_a": [
+     36.3011641,
+     127.41771
+    ],
+    "coord_b": [
+     36.3081332,
+     127.4110638
+    ]
+   }
+  ],
+  "trajectory": {
+   "K=1": {
+    "objective_veh_h_day": 36679.4,
+    "improvement_pct": 0.207,
+    "saved_abs_veh_min_day": 4558.0
+   },
+   "K=2": {
+    "objective_veh_h_day": 36623.2,
+    "improvement_pct": 0.36,
+    "saved_abs_veh_min_day": 7933.0
+   },
+   "K=3": {
+    "objective_veh_h_day": 36584.3,
+    "improvement_pct": 0.466,
+    "saved_abs_veh_min_day": 10268.0
+   },
+   "K=5": {
+    "objective_veh_h_day": 36529.8,
+    "improvement_pct": 0.614,
+    "saved_abs_veh_min_day": 13534.0
+   }
+  }
+ },
+ "posthoc_audit_top10": [
+  {
+   "segment_id": "318361357_559374636_0",
+   "gain_veh_h_day": 75.97,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "559374632_559374639_0",
+   "gain_veh_h_day": 56.25,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "382917291_382917292_0",
+   "gain_veh_h_day": 28.67,
+   "within_2km_of_site": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "559374638_559374639_0",
+   "gain_veh_h_day": 25.85,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "388475791_388475837_0",
+   "gain_veh_h_day": 25.77,
+   "within_2km_of_site": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "559374637_559374639_0",
+   "gain_veh_h_day": 22.32,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "4838045464_4838045469_0",
+   "gain_veh_h_day": 20.57,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "2024731262_2024731278_0",
+   "gain_veh_h_day": 18.44,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "436793281_802043632_0",
+   "gain_veh_h_day": 18.13,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "526753004_526753230_0",
+   "gain_veh_h_day": 17.69,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  }
+ ],
+ "flow_validation": {
+  "spearman_load_vs_congestion_T2": -0.091,
+  "n_common_roads": 116
+ }
+}

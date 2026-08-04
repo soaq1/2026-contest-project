@@ -1,0 +1,228 @@
+{
+ "framing": "의사결정 지원용 what-if 분석 (검증된 예측 모델 아님)",
+ "scenario": "폭설 (2025-01-28 대전ASOS 최심적설 12.3cm 사례 기반 전역 충격)",
+ "parameters": {
+  "snow_speed_reduction": {
+   "motorway_trunk": -0.15,
+   "primary_secondary": -0.25,
+   "tertiary_below": -0.4
+  },
+  "assumption": true,
+  "note": "[가정치] 저하율은 제설 우선순위를 반영한 상식적 가정이며 근거 문헌 없음. 웹앱 슬라이더 파라미터 후보"
+ },
+ "delay": {
+  "headline": {
+   "weighted_mean_delay_min": 4.812,
+   "top10pct_weighted_delay_min": 10.827,
+   "p95_weighted_delay_min": 9.869,
+   "n_pairs": 2947
+  },
+  "by_category": {
+   "same_zone": {
+    "weighted_mean_delay_min": 4.982,
+    "top10pct_weighted_delay_min": 10.242,
+    "p95_weighted_delay_min": 10.177,
+    "n_pairs": 482
+   },
+   "inter_zone": {
+    "weighted_mean_delay_min": 5.972,
+    "top10pct_weighted_delay_min": 10.987,
+    "p95_weighted_delay_min": 10.582,
+    "n_pairs": 2398
+   },
+   "external": {
+    "weighted_mean_delay_min": 3.937,
+    "top10pct_weighted_delay_min": 8.232,
+    "p95_weighted_delay_min": 8.673,
+    "n_pairs": 67
+   }
+  },
+  "n_skipped": 5
+ },
+ "greedy": {
+  "baseline_objective_veh_h_day": 51693.6,
+  "picks": [
+   {
+    "segment_id": "559374632_559374639_0",
+    "highway": "residential",
+    "length_m": 144.5,
+    "marginal_gain_veh_h_day": 94.41,
+    "coord_a": [
+     36.333582,
+     127.3829318
+    ],
+    "coord_b": [
+     36.3345364,
+     127.3818375
+    ]
+   },
+   {
+    "segment_id": "318361357_559374636_0",
+    "highway": "residential",
+    "length_m": 412.8,
+    "marginal_gain_veh_h_day": 58.85,
+    "coord_a": [
+     36.3331268,
+     127.3865692
+    ],
+    "coord_b": [
+     36.3357998,
+     127.3833715
+    ]
+   },
+   {
+    "segment_id": "559374637_559374639_0",
+    "highway": "residential",
+    "length_m": 133.4,
+    "marginal_gain_veh_h_day": 51.24,
+    "coord_a": [
+     36.3353942,
+     127.3828788
+    ],
+    "coord_b": [
+     36.3345364,
+     127.3818375
+    ]
+   },
+   {
+    "segment_id": "382917291_382917292_0",
+    "highway": "residential",
+    "length_m": 372.1,
+    "marginal_gain_veh_h_day": 47.83,
+    "coord_a": [
+     36.3165256,
+     127.3199401
+    ],
+    "coord_b": [
+     36.3165632,
+     127.3240908
+    ]
+   },
+   {
+    "segment_id": "388475791_388475837_0",
+    "highway": "residential",
+    "length_m": 1215.8,
+    "marginal_gain_veh_h_day": 42.95,
+    "coord_a": [
+     36.3011641,
+     127.41771
+    ],
+    "coord_b": [
+     36.3081332,
+     127.4110638
+    ]
+   }
+  ],
+  "trajectory": {
+   "K=1": {
+    "objective_veh_h_day": 51599.2,
+    "improvement_pct": 0.183,
+    "saved_abs_veh_min_day": 5664.0
+   },
+   "K=2": {
+    "objective_veh_h_day": 51540.3,
+    "improvement_pct": 0.296,
+    "saved_abs_veh_min_day": 9196.0
+   },
+   "K=3": {
+    "objective_veh_h_day": 51489.1,
+    "improvement_pct": 0.396,
+    "saved_abs_veh_min_day": 12270.0
+   },
+   "K=5": {
+    "objective_veh_h_day": 51398.3,
+    "improvement_pct": 0.571,
+    "saved_abs_veh_min_day": 17717.0
+   }
+  },
+  "upgrade_assumption": "[가정치] travel_time -30%"
+ },
+ "posthoc_audit_top10": [
+  {
+   "segment_id": "559374632_559374639_0",
+   "highway": "residential",
+   "gain_veh_h_day": 94.41,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "318361357_559374636_0",
+   "highway": "residential",
+   "gain_veh_h_day": 58.85,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "382917291_382917292_0",
+   "highway": "residential",
+   "gain_veh_h_day": 47.83,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "388475791_388475837_0",
+   "highway": "residential",
+   "gain_veh_h_day": 42.95,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "559374639_11993592727_0",
+   "highway": "residential",
+   "gain_veh_h_day": 34.51,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "2024731262_2024731278_0",
+   "highway": "residential",
+   "gain_veh_h_day": 30.78,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "436793281_802043632_0",
+   "highway": "residential",
+   "gain_veh_h_day": 30.24,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "313916090_411278037_0",
+   "highway": "residential",
+   "gain_veh_h_day": 28.73,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": false,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "526753004_526753230_0",
+   "highway": "residential/tertiary",
+   "gain_veh_h_day": 28.44,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "327117937_342048275_0",
+   "highway": "residential",
+   "gain_veh_h_day": 26.78,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  }
+ ],
+ "audit_note": "[가정치] 인접 기준을 '-40% 등급 간선과 노드 공유'로 대체 — 후보가 대부분 residential(-40% 등급)이라 이 기준의 판별력은 낮음",
+ "flow_validation": {
+  "spearman_load_vs_congestion": -0.049,
+  "n_common_roads": 106,
+  "congestion_direction": "[검증됨] 숫자 클수록 정체"
+ }
+}

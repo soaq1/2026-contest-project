@@ -1,0 +1,28 @@
+{
+ "meta": {
+  "limitation": "[한계] 교통링크에 좌표가 없어 도로명 단위 평균으로만 비교 — 링크 단위 검증 불가",
+  "congestion_direction": "[검증됨] 역산 확인: 1=원활(평균 42.7km/h)/2=서행(20.2)/3=정체(9.7), speed와 피어슨 -0.503 — 숫자 클수록 정체. 따라서 부하-혼잡 상관의 부호 해석은 재해석 불필요(음수 = 부하가 덜 정체된 도로에 몰림)",
+  "n_common_roads": 118
+ },
+ "spearman_load_vs_congestion": -0.107,
+ "spearman_load_vs_speed": 0.242,
+ "by_highway_class": {
+  "secondary": {
+   "n_roads": 34,
+   "rho_congestion": -0.405
+  },
+  "tertiary": {
+   "n_roads": 31,
+   "rho_congestion": 0.067
+  },
+  "residential": {
+   "n_roads": 26,
+   "rho_congestion": 0.017
+  },
+  "primary": {
+   "n_roads": 17,
+   "rho_congestion": -0.205
+  }
+ },
+ "load_share_on_matched_edges_pct": 36.5
+}

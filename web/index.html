@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대전 물류 디지털 트윈 — 시나리오 관제</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='6' fill='%234FC7D9'/></svg>">
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="vendor/leaflet.css">
+<style>
+/* ── 디자인 토큰 (프로젝트 확정 팔레트) ─────────────────────────── */
+:root{
+  --bg:#11151B; --road:#3A4452;
+  --ok:#3FA66B; --slow:#E0A93A; --jam:#D14B3D;
+  --cyan:#4FC7D9; --amber:#F2C744;
+  --ink:#E8EAED; --dim:#8B93A1;
+  --panel:rgba(58,68,82,.14); --panel2:rgba(58,68,82,.26);
+  --line:rgba(58,68,82,.55);
+  --head:"Space Grotesk","Segoe UI","Malgun Gothic",sans-serif;
+  --mono:"IBM Plex Mono","Cascadia Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:12px/1.45 var(--head);overflow:hidden}
+#app{display:grid;grid-template-columns:322px 1fr 268px;height:100vh}
+.mono{font-family:var(--mono)}
+h2{font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin:14px 0 6px}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:2px}
+
+/* ── 좌측 패널 ──────────────────────────────────────────────── */
+#left{border-right:1px solid var(--line);padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+#left header h1{font-size:19px;line-height:1.15;font-weight:700;letter-spacing:.01em}
+#left header .sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--cyan);margin-top:4px}
+#left header .base{font-size:10.5px;color:var(--dim);margin-top:7px;line-height:1.5}
+#tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+#tabs button{font:600 11.5px/1 var(--head);color:var(--dim);background:var(--panel);border:1px solid transparent;
+  padding:8px 6px;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s}
+#tabs button:hover{color:var(--ink)}
+#tabs button[aria-selected="true"]{color:var(--ink);background:var(--panel2);border-bottom-color:var(--cyan)}
+.shock{font-size:10.5px;color:var(--dim);line-height:1.5;border-left:2px solid var(--cyan);padding:2px 0 2px 8px}
+.shock .st{color:var(--ink)}
+.badge{display:inline-block;font:500 8.5px/1 var(--mono);letter-spacing:.06em;color:var(--dim);
+  background:var(--panel2);border:1px solid var(--line);border-radius:2px;padding:2px 4px;margin:0 2px;vertical-align:1px;white-space:nowrap}
+.badge.warn{color:var(--slow);border-color:rgba(224,169,58,.4)}
+.badge.derived{color:var(--cyan);border-color:rgba(79,199,217,.4)}
+
+.card{background:var(--panel);border:1px solid var(--line);padding:10px 11px}
+.hero .lbl,.klbl{font-size:9.5px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.hero .val{font:600 27px/1.1 var(--mono);margin-top:3px}
+.hero .val .u{font-size:12px;color:var(--dim);font-weight:400;margin-left:3px}
+.hero .cap{font-size:10px;color:var(--dim);margin-top:4px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.duo .val{font:600 15px/1.2 var(--mono)}
+.duo .u{font-size:10px;color:var(--dim);font-weight:400}
+.duo .lbl{font-size:9px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+
+.bars{display:grid;gap:7px;margin-top:8px}
+.brow{display:grid;grid-template-columns:64px 1fr 58px;gap:8px;align-items:center;font-size:10.5px}
+.brow .bl{color:var(--dim)}
+.brow .bt{height:6px;background:rgba(139,147,161,.14);border-radius:3px;overflow:hidden}
+.brow .bf{height:100%;background:rgba(139,147,161,.55);border-radius:3px}
+.brow .bv{font-family:var(--mono);font-size:10.5px;text-align:right}
+
+.ctl{margin-top:10px}
+.ctl .klbl{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+input[type=range]{width:100%;accent-color:var(--cyan);height:20px;cursor:pointer;background:transparent}
+.ticks{display:flex;justify-content:space-between;font:400 9px var(--mono);color:var(--dim);margin-top:1px}
+.seg{display:flex;gap:3px;margin-top:4px}
+.seg button{flex:1;font:500 10px/1 var(--mono);color:var(--dim);background:var(--panel);border:1px solid var(--line);padding:6px 2px;cursor:pointer}
+.seg button[aria-pressed="true"]{color:var(--bg);background:var(--cyan);border-color:var(--cyan);font-weight:600}
+
+#greedy .kread{display:flex;align-items:baseline;gap:6px;margin-top:2px}
+#greedy .kread .val{font:600 21px/1.1 var(--mono)}
+#greedy .kread .u{font-size:10px;color:var(--dim)}
+#greedy .kread .sw{width:9px;height:9px;background:var(--amber);border-radius:1px;align-self:center}
+#greedy .ksub{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:2px}
+#traj{margin:8px 0 2px;display:block;width:100%;height:44px}
+.picks{margin-top:7px;display:grid;gap:3px}
+.picks .p{display:grid;grid-template-columns:16px 1fr auto;gap:6px;font:400 9.5px var(--mono);color:var(--dim);align-items:center}
+.picks .p b{color:var(--bg);background:var(--amber);border-radius:2px;text-align:center;font-weight:600;font-size:9px;line-height:14px}
+.picks .p.off{opacity:.32}
+.picks .p.off b{background:var(--dim)}
+.picks .pv{color:var(--ink)}
+.note{font-size:10px;color:var(--dim);line-height:1.5;margin-top:8px}
+.note b{color:var(--ink);font-weight:600}
+.finding{border-left:2px solid var(--amber);padding:2px 0 2px 8px;font-size:10.5px;color:var(--dim);line-height:1.5}
+.finding b{color:var(--ink)}
+.list{margin-top:6px;display:grid;gap:2px;max-height:118px;overflow-y:auto}
+.list .r{display:flex;justify-content:space-between;gap:8px;font:400 9.5px var(--mono);color:var(--dim);padding:2px 0;border-bottom:1px dashed rgba(58,68,82,.4)}
+.list .r .v{color:var(--cyan)}
+
+/* ── 지도 ──────────────────────────────────────────────────── */
+#wrap{position:relative;background:var(--bg);transition:background .5s}
+#wrap.snow{background:#0F141E}
+#map{position:absolute;inset:0;background:transparent;font:inherit}
+#net{position:absolute;inset:0;z-index:400;pointer-events:none}
+#mks{position:absolute;inset:0;z-index:450;pointer-events:none;overflow:hidden}
+#bootline{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:600;display:flex;gap:14px;
+  font:500 9px var(--mono);letter-spacing:.18em;color:var(--dim);background:rgba(17,21,27,.82);
+  border:1px solid var(--line);padding:5px 12px;border-radius:2px;transition:opacity .6s;pointer-events:none}
+#bootline .on{color:var(--cyan)}
+#bootline.hide{opacity:0}
+#tip{position:absolute;z-index:900;pointer-events:none;display:none;max-width:230px;
+  background:rgba(17,21,27,.94);border:1px solid var(--line);padding:7px 9px;font-size:10.5px;line-height:1.5}
+#tip .tn{font-weight:600;font-size:11px}
+#tip .tr{color:var(--dim);font-family:var(--mono);font-size:9.5px}
+#tip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:-.5px}
+#replay{position:absolute;right:10px;bottom:10px;z-index:600;font:500 9px var(--mono);letter-spacing:.14em;
+  color:var(--dim);background:rgba(17,21,27,.85);border:1px solid var(--line);padding:6px 9px;cursor:pointer}
+#replay:hover{color:var(--cyan);border-color:var(--cyan)}
+#fbzoom{position:absolute;left:10px;top:10px;z-index:600;display:none;flex-direction:column;gap:3px}
+#fbzoom button{width:28px;height:28px;font:600 15px var(--mono);color:var(--ink);background:rgba(17,21,27,.9);border:1px solid var(--line);cursor:pointer}
+#fbchip{position:absolute;left:10px;bottom:10px;z-index:600;display:none;font:500 9px var(--mono);letter-spacing:.1em;color:var(--slow);background:rgba(17,21,27,.85);border:1px solid rgba(224,169,58,.4);padding:5px 8px}
+.leaflet-container{background:transparent}
+.leaflet-bar{border:1px solid var(--line)!important;box-shadow:none!important}
+.leaflet-bar a{background:rgba(17,21,27,.9)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.leaflet-bar a:hover{background:var(--panel2)!important}
+
+/* 마커 */
+.mk{position:absolute;transform:translate(-50%,-50%) scale(0);will-change:transform}
+.mk.on{animation:pop .26s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(0)}70%{transform:translate(-50%,-50%) scale(1.3)}to{transform:translate(-50%,-50%) scale(1)}}
+.mk.on.pulse::after{content:"";position:absolute;inset:-4px;border:1.5px solid var(--cyan);border-radius:50%;
+  animation:pul .9s ease-out .1s 1 forwards;opacity:0}
+@keyframes pul{from{transform:scale(.5);opacity:.8}to{transform:scale(2.4);opacity:0}}
+.mk .d{width:8px;height:8px;border-radius:50%;background:var(--cyan);border:1.5px solid #0B2A30}
+.mk.site .d{width:11px;height:11px;box-shadow:0 0 0 3px rgba(79,199,217,.25)}
+.mk .lb{position:absolute;left:11px;top:-7px;font:500 9.5px var(--mono);color:var(--ink);white-space:nowrap;
+  background:rgba(17,21,27,.88);border:1px solid var(--line);padding:2px 5px}
+.mk.wh{width:5px;height:5px;background:var(--dim);opacity:.5;transform:translate(-50%,-50%) rotate(45deg) scale(0)}
+.mk.wh.on{animation:none;transform:translate(-50%,-50%) rotate(45deg) scale(1)}
+.mk.wh.hl{background:var(--cyan);opacity:.95;box-shadow:0 0 0 2px rgba(79,199,217,.3)}
+.mk.exp .d{background:transparent;border:2px solid var(--cyan);width:10px;height:10px}
+@media (prefers-reduced-motion:reduce){
+  .mk.on{animation:none;transform:translate(-50%,-50%) scale(1)}
+  .mk.on.pulse::after{animation:none}
+}
+
+/* ── 우측 패널 ──────────────────────────────────────────────── */
+#right{border-left:1px solid var(--line);display:flex;flex-direction:column}
+#rscroll{flex:1;overflow-y:auto;padding:12px 13px}
+.leg{display:grid;gap:6px}
+.leg .l{display:grid;grid-template-columns:30px 1fr;gap:8px;align-items:center;font-size:10.5px;color:var(--dim)}
+.leg .sw{height:0;border-radius:2px}
+.leg svg{display:block}
+#crosscut details{margin-top:6px;border:1px solid var(--line);background:var(--panel)}
+#crosscut summary{cursor:pointer;font:600 10px var(--head);padding:6px 8px;color:var(--ink);list-style:none;display:flex;justify-content:space-between}
+#crosscut summary .n{font-family:var(--mono);color:var(--dim)}
+#crosscut ul{padding:2px 8px 8px 8px;list-style:none;display:grid;gap:3px}
+#crosscut li{font-size:9.5px;color:var(--dim);line-height:1.4;padding-left:9px;position:relative}
+#crosscut li::before{content:"·";position:absolute;left:0}
+#tone{border-top:1px solid var(--line);padding:11px 13px;background:rgba(17,21,27,.6)}
+#tone .t{font-size:10.5px;line-height:1.55;color:var(--dim)}
+#tone .t b{color:var(--ink);font-weight:600}
+#tone .attr{font:400 8.5px var(--mono);color:var(--dim);opacity:.75;margin-top:7px;letter-spacing:.03em}
+
+#fatal{position:fixed;inset:0;background:var(--bg);z-index:2000;display:none;align-items:center;justify-content:center}
+#fatal .box{max-width:420px;border:1px solid var(--jam);padding:20px;font-size:12px;line-height:1.7}
+#fatal h3{color:var(--jam);font-size:14px;margin-bottom:8px}
+#fatal code{font-family:var(--mono);color:var(--cyan);font-size:11px}
+#errband{position:fixed;top:0;left:0;right:0;z-index:1900;display:none;background:rgba(209,75,61,.92);color:#fff;
+  font:500 10.5px var(--mono);padding:5px 10px}
+@media (max-width:1080px){#app{grid-template-columns:280px 1fr 220px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="left" aria-label="시나리오 지표 패널">
+    <header>
+      <h1>대전 물류<br>디지털 트윈</h1>
+      <div class="sub">SCENARIO CONSOLE · WHAT-IF</div>
+      <div class="base" id="baseinfo"></div>
+    </header>
+    <nav id="tabs" role="tablist" aria-label="시나리오 선택"></nav>
+    <div class="shock" id="shock"></div>
+    <section id="metrics" aria-live="polite"></section>
+    <section id="greedy"></section>
+    <div class="finding" id="finding"></div>
+  </aside>
+
+  <main id="wrap">
+    <div id="map"></div>
+    <canvas id="net"></canvas>
+    <div id="mks"></div>
+    <div id="bootline" aria-hidden="true">
+      <span data-s="0">NETWORK</span><span data-s="1">TRAFFIC-FILL</span>
+      <span data-s="2">SHOCK</span><span data-s="3">INTERVENE</span>
+    </div>
+    <div id="fbzoom"><button id="fbin" aria-label="확대">+</button><button id="fbout" aria-label="축소">−</button></div>
+    <div id="fbchip">FALLBACK PAN/ZOOM MODE</div>
+    <button id="replay" title="부팅 시퀀스 재생">⟳ REPLAY BOOT</button>
+    <div id="tip" role="status"></div>
+  </main>
+
+  <aside id="right" aria-label="범례 및 안내">
+    <div id="rscroll">
+      <h2>범례</h2><div class="leg" id="legend"></div>
+      <h2>표시 규칙</h2><div class="note" id="disprule"></div>
+      <h2>가정·검증 현황</h2><div id="crosscut"></div>
+    </div>
+    <footer id="tone">
+      <div class="t"><b>검증된 예측이 아닌 시나리오 기반 의사결정 지원 분석</b>입니다.
+        모든 수치는 사전계산된 결과의 조회이며, [가정치] 표시는 임의 설정 파라미터를 뜻합니다.</div>
+      <div class="attr" id="attr"></div>
+    </footer>
+  </aside>
+</div>
+
+<div id="errband"></div>
+<div id="fatal"><div class="box">
+  <h3>데이터 번들 로드 실패</h3>
+  <p><code>web/data/bundle.js</code> 를 찾을 수 없습니다.<br>
+  프로젝트 루트에서 <code>py scripts\task22_web_bundle.py</code> 실행 후 새로고침하세요.<br><br>
+  로컬 서버 실행: <code>py -m http.server 8123 -d web</code> →
+  <code>http://localhost:8123</code></p>
+</div></div>
+
+<script src="vendor/leaflet.js"></script>
+<script src="data/bundle.js"></script>
+<script>
+"use strict";
+/* ═══ 0. 공통 ═══════════════════════════════════════════════════ */
+const $=s=>document.querySelector(s);
+const CLS_COLOR={1:"#3FA66B",2:"#E0A93A",3:"#D14B3D"};
+const CLS_NAME={1:"원활",2:"서행",3:"정체"};
+const CLS_W={1:1.1,2:1.7,3:2.6};          /* 굵기=혼잡 보조 인코딩(색약 대응) */
+const HW_KO={motorway:"고속도로",trunk:"도시고속·간선",primary:"주간선",secondary:"보조간선",
+  tertiary:"집산도로",residential:"주거지 도로",service:"서비스 도로",unclassified:"미분류",
+  track:"농로",living_street:"생활도로",busway:"버스전용"};
+const nf=new Intl.NumberFormat("ko-KR");
+const nf1=new Intl.NumberFormat("ko-KR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const nf3=new Intl.NumberFormat("ko-KR",{minimumFractionDigits:3,maximumFractionDigits:3});
+const qs=new URLSearchParams(location.search);
+const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches||qs.get("nomotion")==="1";
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const chips=s=>esc(s).replace(/\[가정치[^\]]*\]/g,'<span class="badge warn">가정치</span>')
+                     .replace(/\[확인 필요\]/g,'<span class="badge warn">확인 필요</span>')
+                     .replace(/\[검증됨\]/g,'<span class="badge">검증됨</span>')
+                     .replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>");
+window.addEventListener("error",e=>{const b=$("#errband");b.style.display="block";
+  b.textContent="스크립트 오류: "+e.message;});
+
+/* ═══ 1. 데이터 로드 ═══════════════════════════════════════════ */
+function boot(B){try{init(B);}catch(e){console.error(e);
+  const b=$("#errband");b.style.display="block";b.textContent="초기화 오류: "+e.message;}}
+if(window.__BUNDLE__)boot(window.__BUNDLE__);
+else fetch("data/bundle.json").then(r=>r.json()).then(boot)
+  .catch(()=>{$("#fatal").style.display="flex";});
+
+function init(B){
+/* ═══ 2. 세그먼트 디코드 ═══════════════════════════════════════ */
+const {lat0,lng0,q}=B.meta.coord;
+const segs=B.roads.segments, nSeg=segs.length;
+const mercY=lat=>{const s=Math.sin(lat*Math.PI/180);return .5-Math.log((1+s)/(1-s))/(4*Math.PI);};
+const mercX=lng=>(lng+180)/360;
+let totPts=0;for(const s of segs)totPts+=s[0].length>>1;
+const PX=new Float64Array(totPts),PY=new Float64Array(totPts);
+const OFF=new Int32Array(nSeg+1);
+const MIDX=new Float64Array(nSeg),MIDY=new Float64Array(nSeg);
+let latMin=90,latMax=-90,lngMin=190,lngMax=-190;
+{let p=0;
+for(let i=0;i<nSeg;i++){OFF[i]=p;const f=segs[i][0];
+  for(let j=0;j<f.length;j+=2){const la=lat0+f[j]/q,ln=lng0+f[j+1]/q;
+    PX[p]=mercX(ln);PY[p]=mercY(la);p++;
+    if(la<latMin)latMin=la;if(la>latMax)latMax=la;
+    if(ln<lngMin)lngMin=ln;if(ln>lngMax)lngMax=ln;}
+  const m=OFF[i]+((f.length>>1)>>1);MIDX[i]=PX[m];MIDY[i]=PY[m];}
+OFF[nSeg]=p;}
+const nxMin=mercX(lngMin),nxMax=mercX(lngMax);
+const CB=new Uint8Array(nSeg),CT=new Uint8Array(nSeg),CS=new Uint8Array(nSeg),SRC=new Uint8Array(nSeg),
+      NMI=new Int32Array(nSeg),HWI=new Int16Array(nSeg);
+for(let i=0;i<nSeg;i++){const s=segs[i];NMI[i]=s[1];HWI[i]=s[2];SRC[i]=s[3];CB[i]=s[4];CT[i]=s[5];CS[i]=s[6];}
+const CLS_OF={tram:CT,snow:CS,retail:CB,yuseong:CB};
+
+/* 공간 그리드 (hover) — 정규 메르카토르, 셀≈300m */
+const CELL=7.5e-6,grid=new Map();
+const ck=(x,y)=>((x/CELL)|0)+":"+((y/CELL)|0);
+for(let i=0;i<nSeg;i++){let x0=1,x1=0,y0=1,y1=0;
+  for(let p=OFF[i];p<OFF[i+1];p++){if(PX[p]<x0)x0=PX[p];if(PX[p]>x1)x1=PX[p];
+    if(PY[p]<y0)y0=PY[p];if(PY[p]>y1)y1=PY[p];}
+  for(let cx=(x0/CELL)|0;cx<=(x1/CELL)|0;cx++)for(let cy=(y0/CELL)|0;cy<=(y1/CELL)|0;cy++){
+    const k=cx+":"+cy;let a=grid.get(k);if(!a){a=[];grid.set(k,a);}a.push(i);}}
+
+/* greedy 픽 지오메트리 (누적 길이 분율) */
+function pickGeom(segIdx){const pts=[];let L=0;const cum=[0];
+  for(let p=OFF[segIdx];p<OFF[segIdx+1];p++){pts.push(PX[p],PY[p]);
+    if(p>OFF[segIdx]){const dx=PX[p]-PX[p-1],dy=PY[p]-PY[p-1];L+=Math.hypot(dx,dy);cum.push(L);}}
+  return {pts,cum:cum.map(c=>L?c/L:1)};}
+for(const k of["tram","snow","retail"])for(const p of B.greedy[k].picks)p.g=pickGeom(p.seg);
+
+/* ═══ 3. 지도 엔진 (Leaflet 또는 자체 폴백) ══════════════════════ */
+const wrap=$("#wrap"),cv=$("#net"),ctx=cv.getContext("2d"),mks=$("#mks");
+let engine;
+const PAD=.06,bLatMin=latMin-PAD*.5,bLatMax=latMax+PAD*.5,bLngMin=lngMin-PAD,bLngMax=lngMax+PAD;
+function leafletEngine(){
+  const map=L.map("map",{zoomControl:true,attributionControl:false,zoomAnimation:false,
+    markerZoomAnimation:false,fadeAnimation:false,inertia:true,zoomSnap:.25,minZoom:10,maxZoom:17.5});
+  map.fitBounds([[latMin,lngMin],[latMax,lngMax]],{padding:[16,16]});
+  map.setMaxBounds([[bLatMin-.15,bLngMin-.2],[bLatMax+.15,bLngMax+.2]]);
+  const cb=()=>{markDirty();placeMarkers();};
+  map.on("move zoom viewreset resize",cb);
+  return {fallback:false,
+    view(){const z=map.getZoom(),sc=256*Math.pow(2,z),c=map.project(map.getCenter(),z),s=map.getSize();
+      return {sc,cx:c.x-s.x/2,cy:c.y-s.y/2};},
+    unproj(px,py){const ll=map.containerPointToLatLng([px,py]);return {x:mercX(ll.lng),y:mercY(ll.lat)};},
+    fit(){map.fitBounds([[latMin,lngMin],[latMax,lngMax]],{padding:[16,16]});}};
+}
+function miniEngine(){
+  $("#fbzoom").style.display="flex";$("#fbchip").style.display="block";
+  const st={cx:(nxMin+nxMax)/2,cy:(mercY(latMax)+mercY(latMin))/2,z:12};
+  function fit(){const w=wrap.clientWidth,h=wrap.clientHeight;
+    const dx=nxMax-nxMin,dy=Math.abs(mercY(latMin)-mercY(latMax));
+    st.z=Math.log2(Math.min((w-40)/(dx*256),(h-40)/(dy*256)));
+    st.cx=(nxMin+nxMax)/2;st.cy=(mercY(latMax)+mercY(latMin))/2;fire();}
+  const subs=[];const fire=()=>{markDirty();placeMarkers();};
+  let drag=null;
+  wrap.addEventListener("pointerdown",e=>{if(e.target.closest("button"))return;
+    drag={x:e.clientX,y:e.clientY};wrap.setPointerCapture&&wrap.setPointerCapture(e.pointerId);});
+  wrap.addEventListener("pointermove",e=>{if(!drag)return;const sc=256*Math.pow(2,st.z);
+    st.cx-=(e.clientX-drag.x)/sc;st.cy-=(e.clientY-drag.y)/sc;drag={x:e.clientX,y:e.clientY};fire();});
+  wrap.addEventListener("pointerup",()=>drag=null);
+  wrap.addEventListener("wheel",e=>{e.preventDefault();const r=wrap.getBoundingClientRect();
+    zoomAt(e.clientX-r.left,e.clientY-r.top,-e.deltaY*.0022);},{passive:false});
+  function zoomAt(px,py,dz){const sc0=256*Math.pow(2,st.z);
+    const wx=st.cx+(px-wrap.clientWidth/2)/sc0,wy=st.cy+(py-wrap.clientHeight/2)/sc0;
+    st.z=clamp(st.z+dz,10,17.5);const sc1=256*Math.pow(2,st.z);
+    st.cx=wx-(px-wrap.clientWidth/2)/sc1;st.cy=wy-(py-wrap.clientHeight/2)/sc1;fire();}
+  $("#fbin").onclick=()=>zoomAt(wrap.clientWidth/2,wrap.clientHeight/2,.5);
+  $("#fbout").onclick=()=>zoomAt(wrap.clientWidth/2,wrap.clientHeight/2,-.5);
+  return {fallback:true,
+    view(){const sc=256*Math.pow(2,st.z);
+      return {sc,cx:st.cx*sc-wrap.clientWidth/2,cy:st.cy*sc-wrap.clientHeight/2};},
+    unproj(px,py){const sc=256*Math.pow(2,st.z);
+      return {x:(st.cx*sc-wrap.clientWidth/2+px)/sc,y:(st.cy*sc-wrap.clientHeight/2+py)/sc};},
+    fit};
+}
+engine=(window.L)?leafletEngine():miniEngine();
+
+/* ═══ 4. 상태 ═════════════════════════════════════════════════ */
+const SCENS=["tram","snow","retail","yuseong"];
+const S={scen:SCENS.includes(qs.get("scenario"))?qs.get("scenario"):"tram",
+  K:clamp(parseInt(qs.get("k")||"5",10)||5,1,5),
+  f:["0.3","0.4","0.5"].includes(qs.get("f"))?+qs.get("f"):B.scenarios.retail.f_representative,
+  T:["T0","T1","T2"].includes(qs.get("t"))?qs.get("t"):"T2",
+  yus:["low","mid","high"].includes(qs.get("yus"))?qs.get("yus"):"mid"};
+const T_KEY={T0:"T0_폐점전",T1:"T1_2024-05",T2:"T2_2026-01"};
+const T_LBL={T0:"폐점 전",T1:"2024-05",T2:"2026-01"};
+
+/* ═══ 5. 부팅 타임라인 ═════════════════════════════════════════ */
+const TL={SKEL:300,SCAN0:300,SCAN_D:700,CLS_DELAY:[0,90,180],RAMP:160,MK0:1080,MK_STEP:60,GR0:1450,GR_STEP:190,GR_DRAW:170};
+const anim={mode:"idle",t0:0,skipSkel:false,grFrom:0,grT0:0};
+let dirty=true;const markDirty=()=>dirty=true;
+function startBoot(full){
+  if(REDUCED){anim.mode="idle";finishMarkers();bootline.classList.add("hide");markDirty();return;}
+  anim.mode="boot";anim.skipSkel=!full;anim.t0=performance.now()-(full?0:TL.SKEL);
+  anim.grFrom=0;resetMarkers();bootlineShow();markDirty();}
+function startGreedyAdd(fromK){if(REDUCED){markDirty();return;}
+  anim.mode="gadd";anim.grFrom=fromK;anim.grT0=performance.now();markDirty();}
+
+/* ═══ 6. 마커 ═════════════════════════════════════════════════ */
+const markers=[];   /* {el,x,y(nmerc),t(등장시각 offset ms),shown} */
+function addMk(cls,lat,lng,html,t,title){const el=document.createElement("div");
+  el.className="mk "+cls;el.innerHTML=html;if(title)el.title=title;
+  mks.appendChild(el);markers.push({el,x:mercX(lng),y:mercY(lat),t,shown:false});return el;}
+function resetMarkers(){for(const m of markers)if(!m.keep){m.shown=false;m.el.classList.remove("on");}}
+function finishMarkers(){for(const m of markers){m.shown=true;m.el.classList.add("on");}}
+function clearMarkers(){mks.innerHTML="";markers.length=0;}
+function placeMarkers(){const v=engine.view();
+  for(const m of markers){const x=m.x*v.sc-v.cx,y=m.y*v.sc-v.cy;
+    m.el.style.left=x+"px";m.el.style.top=y+"px";
+    m.el.style.display=(x<-60||y<-60||x>wrap.clientWidth+60||y>wrap.clientHeight+60)?"none":"";}}
+function buildMarkers(){clearMarkers();const sc=S.scen;let t=TL.MK0;
+  /* 물류창고 43 — 모든 시나리오 상시(희미) */
+  const yusWh=new Set((B.scenarios.yuseong.routes||[]).map(r=>r.warehouse));
+  for(const w of B.overlays.warehouses){
+    const el=addMk("wh"+((sc==="yuseong"&&yusWh.has(w.name))?" hl":""),w.lat,w.lng,"",0,w.name);
+    el.classList.add("on");markers[markers.length-1].shown=true;markers[markers.length-1].keep=true;}
+  if(sc==="tram"){for(const p of B.overlays.tram_points){
+      addMk("pulse",p.lat,p.lng,'<div class="d"></div>',t,p.name);t+=TL.MK_STEP;}}
+  else if(sc==="retail"){for(const [nm,site] of Object.entries(B.scenarios.retail.sites)){
+      addMk("site pulse",site.lat,site.lng,
+        '<div class="d"></div><div class="lb">'+esc(nm)+"</div>",t);t+=140;}}
+  else if(sc==="yuseong"){const y=B.scenarios.yuseong;
+    addMk("site pulse",y.site.lat,y.site.lng,
+      '<div class="d"></div><div class="lb">'+esc(y.site.name)+"</div>",t);t+=140;
+    for(const e of B.overlays.expansion_sites){if(e.name===y.site.name)continue;
+      addMk("exp",e.lat,e.lng,'<div class="d"></div>',t,
+        e.name+" ("+e.gu+", "+(e.households?e.households+"세대":"위치만 확인")+")");t+=90;}}
+  placeMarkers();if(REDUCED)finishMarkers();}
+
+/* ═══ 7. 캔버스 렌더 ═══════════════════════════════════════════ */
+let W=0,H=0,DPR=1;
+function resize(){DPR=devicePixelRatio||1;W=wrap.clientWidth;H=wrap.clientHeight;
+  cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+"px";cv.style.height=H+"px";markDirty();placeMarkers();}
+new ResizeObserver(resize).observe(wrap);resize();
+
+let hoverSeg=-1;
+function drawPolyTo(c,i,sc,ox,oy){c.moveTo(PX[OFF[i]]*sc-ox,PY[OFF[i]]*sc-oy);
+  for(let p=OFF[i]+1;p<OFF[i+1];p++)c.lineTo(PX[p]*sc-ox,PY[p]*sc-oy);}
+function drawPoly(i,v){drawPolyTo(ctx,i,v.sc,v.cx,v.cy);}
+
+/* ── 씬 캐시 v2 ───────────────────────────────────────────────
+   측정 근거(2026-07-19 진단·잔여 렉 재진단): 전체 재스트로크는 도시 전체
+   뷰에서 ~100ms 래스터가 본체(경로 기록 JS 2.4ms, 정점 수 기여 28%뿐).
+   → 매 프레임은 blit. 재스트로크는 ① 제스처 중엔 하지 않고 이전 캐시를
+   변환 blit(줌은 일시 확대 표시), 뷰가 SETTLE_MS 멈춘 뒤 1회 ② 그리드
+   컬링으로 화면 밖 세그먼트 제외(깊은 확대일수록 절감 — 4배 줌 도심은
+   19,065/24,885로 소폭, 실측 2026-07-20) ③ 캔버스 재할당
+   없이 재사용, 유휴 화면은 병합 1장(뼈대는 3색 아래 완전 은폐라 생략) */
+const CACHE_PAD=256,SETTLE_MS=120;
+const Lsk=document.createElement("canvas");
+const Lcl=[document.createElement("canvas"),document.createElement("canvas"),document.createElement("canvas")];
+const LBS=document.createElement("canvas");
+const cache={ok:false,layers:false,scen:"",sc:0,ox:0,oy:0,w:0,h:0,dpr:0};
+const mark=new Uint8Array(nSeg);
+const gridList=[...grid].map(([k,arr])=>{const c=k.split(":");return {gx:+c[0],gy:+c[1],arr};});
+let lastMoveAt=0;const prevV={sc:0,cx:0,cy:0};
+function visibleList(sc,ox,oy,w,h){
+  const x0=Math.floor(ox/sc/CELL)-1,x1=Math.floor((ox+w)/sc/CELL)+1;
+  const y0=Math.floor(oy/sc/CELL)-1,y1=Math.floor((oy+h)/sc/CELL)+1;
+  mark.fill(0);const list=[];
+  for(const g of gridList){if(g.gx<x0||g.gx>x1||g.gy<y0||g.gy>y1)continue;
+    for(const i of g.arr)if(!mark[i]){mark[i]=1;list.push(i);}}
+  return list;}
+function cacheFresh(v){return cache.ok&&cache.scen===S.scen&&cache.sc===v.sc&&cache.dpr===DPR
+  &&cache.w===W+CACHE_PAD*2&&cache.h===H+CACHE_PAD*2
+  &&v.cx-cache.ox>=0&&v.cy-cache.oy>=0
+  &&v.cx-cache.ox+W<=cache.w&&v.cy-cache.oy+H<=cache.h;}
+function renderScene(v,layers){
+  const zf=clamp(v.sc/(256*4096),.75,1.9);
+  const w=W+CACHE_PAD*2,h=H+CACHE_PAD*2,ox=v.cx-CACHE_PAD,oy=v.cy-CACHE_PAD;
+  const CLS=CLS_OF[S.scen];
+  const list=visibleList(v.sc,ox,oy,w,h);
+  const prep=c2=>{if(c2.width<w*DPR||c2.height<h*DPR){c2.width=w*DPR;c2.height=h*DPR;}
+    const c=c2.getContext("2d");c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,c2.width,c2.height);
+    c.setTransform(DPR,0,0,DPR,0,0);c.lineCap="round";c.lineJoin="round";return c;};
+  if(layers){
+    const cs=prep(Lsk);cs.strokeStyle="#3A4452";cs.lineWidth=.9*zf;
+    cs.beginPath();for(const i of list)drawPolyTo(cs,i,v.sc,ox,oy);cs.stroke();
+    for(let cls=1;cls<=3;cls++){const cc=prep(Lcl[cls-1]);
+      cc.strokeStyle=CLS_COLOR[cls];cc.lineWidth=CLS_W[cls]*zf;
+      cc.beginPath();for(const i of list)if(CLS[i]===cls)drawPolyTo(cc,i,v.sc,ox,oy);cc.stroke();}
+    const cb=prep(LBS);cb.setTransform(1,0,0,1,0,0);
+    for(const l of Lcl)cb.drawImage(l,0,0,w*DPR,h*DPR,0,0,w*DPR,h*DPR);
+  }else{
+    const cb=prep(LBS);
+    for(let cls=1;cls<=3;cls++){cb.strokeStyle=CLS_COLOR[cls];cb.lineWidth=CLS_W[cls]*zf;
+      cb.beginPath();for(const i of list)if(CLS[i]===cls)drawPolyTo(cb,i,v.sc,ox,oy);cb.stroke();}}
+  Object.assign(cache,{ok:true,layers,scen:S.scen,sc:v.sc,ox,oy,w,h,dpr:DPR});}
+function blit(src,v,alpha,clipX){ /* 캐시 배율이 달라도 변환 blit (r=1이면 정확) */
+  if(alpha<=0)return;
+  const r=v.sc/cache.sc,dx=cache.ox*r-v.cx,dy=cache.oy*r-v.cy;
+  ctx.save();ctx.globalAlpha=Math.min(alpha,1);
+  if(clipX!=null){ctx.beginPath();ctx.rect(0,0,clipX,H);ctx.clip();}
+  ctx.drawImage(src,0,0,cache.w*cache.dpr,cache.h*cache.dpr,dx,dy,cache.w*r,cache.h*r);
+  ctx.restore();}
+function blitReveal(src,v,t,delay){ /* 스캔 전면 x 왼쪽은 표시, 에지는 알파 슬라이스 */
+  const pr=(t-TL.SCAN0-delay)/TL.SCAN_D;
+  if(pr<=0)return;
+  const edgePr=TL.RAMP/TL.SCAN_D;
+  if(pr>=1+edgePr){blit(src,v,1);return;}
+  const xAt=p=>(nxMin+(nxMax-nxMin)*p)*v.sc-v.cx;
+  const x1=xAt(Math.min(pr,1)),x0=xAt(Math.max(pr-edgePr,0));
+  blit(src,v,1,Math.max(x0,0));
+  const SL=5,r=v.sc/cache.sc,dx=cache.ox*r-v.cx,dy=cache.oy*r-v.cy;
+  for(let s=0;s<SL;s++){
+    const xa=x0+(x1-x0)*s/SL,xb=x0+(x1-x0)*(s+1)/SL;
+    if(xb<=0||xa>=W)continue;
+    ctx.save();ctx.globalAlpha=1-(s+.5)/SL;
+    ctx.beginPath();ctx.rect(xa,0,xb-xa,H);ctx.clip();
+    ctx.drawImage(src,0,0,cache.w*cache.dpr,cache.h*cache.dpr,dx,dy,cache.w*r,cache.h*r);
+    ctx.restore();}}
+function metersPerPx(v){const latMid=(latMin+latMax)/2;
+  return 40075016.686*Math.cos(latMid*Math.PI/180)/v.sc;}
+
+function draw(now){
+  const v=engine.view();
+  if(v.sc!==prevV.sc||v.cx!==prevV.cx||v.cy!==prevV.cy){
+    lastMoveAt=now;prevV.sc=v.sc;prevV.cx=v.cx;prevV.cy=v.cy;}
+  if(anim.mode==="boot"){                       /* 리빌은 현재 뷰의 레이어 필요 */
+    if(!cacheFresh(v)||!cache.layers)renderScene(v,true);}
+  else if(!cacheFresh(v)){
+    if(!cache.ok)renderScene(v,true);
+    else{                                       /* 제스처 중: 이전 캐시 변환 blit 유지 */
+      const r=v.sc/cache.sc,dx=cache.ox*r-v.cx,dy=cache.oy*r-v.cy;
+      const cover=Math.max(0,Math.min(W,dx+cache.w*r)-Math.max(0,dx))
+                 *Math.max(0,Math.min(H,dy+cache.h*r)-Math.max(0,dy))/(W*H);
+      if(now-lastMoveAt>SETTLE_MS||r>2.05||r<.45||cover<.55)renderScene(v,false);}}
+  const stale=!cacheFresh(v);
+  ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);
+  const CLS=CLS_OF[S.scen];
+  const t=(anim.mode==="boot")?now-anim.t0:1e9;
+  const zf=clamp(v.sc/(256*4096),.75,1.9);           /* 줌 계수 (z=12 기준) */
+  ctx.lineCap="round";ctx.lineJoin="round";
+  /* 1) 뼈대 — 부팅 페이드인 동안만 (유휴 화면은 3색이 완전히 덮음) */
+  if(anim.mode==="boot")blit(Lsk,v,clamp(t/TL.SKEL,0,1)*.85);
+  /* 2) 혼잡 채색 (병합 캐시 blit / 부팅은 스캔 리빌 마스크) */
+  if(anim.mode==="boot")for(let c=0;c<3;c++)blitReveal(Lcl[c],v,t,TL.CLS_DELAY[c]);
+  else blit(LBS,v,1);
+  ctx.globalAlpha=1;
+  if(stale)dirty=true;                          /* 정지 감지까지 프레임 유지 */
+  /* 3) 스캔라인 */
+  if(t>=TL.SCAN0&&t<=TL.SCAN0+TL.SCAN_D+TL.CLS_DELAY[2]+TL.RAMP){
+    const pr=clamp((t-TL.SCAN0)/TL.SCAN_D,0,1);
+    const sx=(nxMin+(nxMax-nxMin)*pr)*v.sc-v.cx;
+    const g=ctx.createLinearGradient(sx-30,0,sx,0);
+    g.addColorStop(0,"rgba(79,199,217,0)");g.addColorStop(1,"rgba(79,199,217,.10)");
+    ctx.fillStyle=g;ctx.fillRect(sx-30,0,30,H);
+    ctx.fillStyle="rgba(79,199,217,.55)";ctx.fillRect(sx,0,1.2,H);}
+  /* 4) 시나리오 오버레이 */
+  const mkT=t>=TL.MK0||anim.mode!=="boot";
+  if(S.scen==="tram"&&mkT){
+    const mpp=metersPerPx(v),r=B.overlays.tram_radius_m/mpp;
+    ctx.strokeStyle="rgba(79,199,217,.30)";ctx.fillStyle="rgba(79,199,217,.045)";ctx.lineWidth=1;
+    for(const p of B.overlays.tram_points){const x=mercX(p.lng)*v.sc-v.cx,y=mercY(p.lat)*v.sc-v.cy;
+      ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fill();ctx.stroke();}
+    ctx.strokeStyle="rgba(79,199,217,.5)";ctx.lineWidth=1.4;ctx.setLineDash([2,7]);
+    ctx.beginPath();B.overlays.tram_points.forEach((p,i)=>{
+      const x=mercX(p.lng)*v.sc-v.cx,y=mercY(p.lat)*v.sc-v.cy;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.stroke();ctx.setLineDash([]);}
+  if(S.scen==="retail"&&mkT){
+    ctx.strokeStyle="rgba(79,199,217,.85)";ctx.lineWidth=2.4*zf;ctx.setLineDash([6,4]);
+    ctx.beginPath();for(const r of B.scenarios.retail.top10_load_reduction)drawPoly(r.seg,v);
+    ctx.stroke();ctx.setLineDash([]);}
+  if(S.scen==="yuseong"&&mkT){const y=B.scenarios.yuseong;
+    const wh=Object.fromEntries(B.overlays.warehouses.map(w=>[w.name,w]));
+    ctx.strokeStyle="rgba(79,199,217,.5)";ctx.lineWidth=1.3;ctx.setLineDash([3,6]);
+    for(const r of y.routes){const w=wh[r.warehouse];if(!w)continue;
+      ctx.beginPath();ctx.moveTo(mercX(y.site.lng)*v.sc-v.cx,mercY(y.site.lat)*v.sc-v.cy);
+      ctx.lineTo(mercX(w.lng)*v.sc-v.cx,mercY(w.lat)*v.sc-v.cy);ctx.stroke();}
+    ctx.setLineDash([]);}
+  /* 5) greedy 개입 (K 슬라이더) */
+  const G=B.greedy[S.scen];
+  if(G){let gT;
+    if(anim.mode==="boot")gT=t-TL.GR0;
+    else if(anim.mode==="gadd")gT=now-anim.grT0;
+    else gT=1e9;
+    for(let k=1;k<=S.K;k++){const p=G.picks[k-1];
+      let pr;
+      if(anim.mode==="gadd")pr=(k<=anim.grFrom)?1:clamp((gT-(k-1-anim.grFrom)*TL.GR_STEP)/TL.GR_DRAW,0,1);
+      else pr=clamp((gT-(k-1)*TL.GR_STEP)/TL.GR_DRAW,0,1);
+      if(pr<=0)continue;
+      drawPickPartial(p,pr,v,zf);}}
+  /* 6) hover 하이라이트 */
+  if(hoverSeg>=0){const cls=CLS[hoverSeg];
+    ctx.strokeStyle="#11151B";ctx.lineWidth=(CLS_W[cls]*zf)+3.5;
+    ctx.beginPath();drawPoly(hoverSeg,v);ctx.stroke();
+    ctx.strokeStyle=CLS_COLOR[cls];ctx.lineWidth=(CLS_W[cls]*zf)+1.6;
+    ctx.beginPath();drawPoly(hoverSeg,v);ctx.stroke();}
+}
+function drawPickPartial(p,pr,v,zf){
+  const {pts,cum}=p.g;const n=cum.length;
+  let end=n-1,fr=1;
+  if(pr<1){for(let i=1;i<n;i++)if(cum[i]>=pr){end=i;fr=(pr-cum[i-1])/((cum[i]-cum[i-1])||1);break;}}
+  const X=i=>pts[i*2]*v.sc-v.cx,Y=i=>pts[i*2+1]*v.sc-v.cy;
+  let ex=X(end),ey=Y(end);
+  if(pr<1){ex=X(end-1)+(X(end)-X(end-1))*fr;ey=Y(end-1)+(Y(end)-Y(end-1))*fr;}
+  for(const pass of [["#11151B",7],["#F2C744",3.4]]){
+    ctx.strokeStyle=pass[0];ctx.lineWidth=pass[1]*Math.min(zf,1.4);
+    ctx.beginPath();ctx.moveTo(X(0),Y(0));
+    for(let i=1;i<end;i++)ctx.lineTo(X(i),Y(i));
+    ctx.lineTo(ex,ey);ctx.stroke();}
+  if(pr<1){ctx.fillStyle="#F2C744";ctx.beginPath();ctx.arc(ex,ey,4,0,6.2832);ctx.fill();}
+}
+
+/* ═══ 8. rAF 루프 + 부팅 상태줄 ════════════════════════════════ */
+const bootline=$("#bootline");let blHideAt=0;
+function bootlineShow(){bootline.classList.remove("hide");blHideAt=0;}
+function bootlineUpdate(now){
+  if(anim.mode!=="boot"){if(blHideAt&&now>blHideAt)bootline.classList.add("hide");return;}
+  const t=now-anim.t0;
+  const st=[t>=0,t>=TL.SCAN0,t>=TL.MK0,t>=TL.GR0];
+  bootline.querySelectorAll("span").forEach((s,i)=>s.classList.toggle("on",st[i]));}
+let drawFailed=false;
+function frame(now){
+  try{
+    if(anim.mode==="boot"){
+      const t=now-anim.t0;
+      /* 마커 등장 스케줄 */
+      for(const m of markers)if(!m.shown&&t>=m.t){m.shown=true;m.el.classList.add("on");}
+      const G=B.greedy[S.scen];
+      const grEnd=G?TL.GR0+(S.K-1)*TL.GR_STEP+TL.GR_DRAW:TL.MK0+600;
+      if(t>grEnd+250){anim.mode="idle";blHideAt=now+900;}
+      dirty=true;}
+    else if(anim.mode==="gadd"){
+      const gT=now-anim.grT0;
+      if(gT>(S.K-anim.grFrom-1)*TL.GR_STEP+TL.GR_DRAW+120)anim.mode="idle";
+      dirty=true;}
+    bootlineUpdate(now);
+    if(dirty){dirty=false;draw(now);}
+  }catch(e){
+    if(!drawFailed){drawFailed=true;anim.mode="idle";
+      const b=$("#errband");b.style.display="block";b.textContent="렌더 오류(정적 상태로 계속): "+e.message;
+      try{draw(1e12);}catch(_){}}}
+  requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+if(qs.get("probe")==="1")setTimeout(()=>{
+  const v=engine.view();
+  const sx=(MIDX[0]*v.sc-v.cx).toFixed(0),sy=(MIDY[0]*v.sc-v.cy).toFixed(0);
+  let lit=0;try{const im=ctx.getImageData(0,0,cv.width,cv.height).data;
+    for(let i=3;i<im.length;i+=397)if(im[i]>10)lit++;}catch(e){lit=-1;}
+  document.title="PROBE|"+S.scen+"|mode="+anim.mode+"|cv="+W+"x"+H
+    +"|sc="+v.sc.toFixed(0)+"|cx="+v.cx.toFixed(0)+"|cy="+v.cy.toFixed(0)
+    +"|seg0@"+sx+","+sy+"|lit="+lit
+    +"|err="+($("#errband").style.display||"none");},1500);
+
+/* ═══ 9. hover 툴팁 ════════════════════════════════════════════ */
+const tip=$("#tip");let mx=0,my=0,tipPending=false;
+wrap.addEventListener("pointermove",e=>{const r=wrap.getBoundingClientRect();
+  mx=e.clientX-r.left;my=e.clientY-r.top;
+  if(!tipPending){tipPending=true;requestAnimationFrame(hoverCheck);}});
+wrap.addEventListener("pointerleave",()=>{hoverSeg=-1;tip.style.display="none";markDirty();});
+function segDistPx(i,v){let best=1e9;
+  for(let p=OFF[i];p<OFF[i+1]-1;p++){
+    const x1=PX[p]*v.sc-v.cx,y1=PY[p]*v.sc-v.cy,x2=PX[p+1]*v.sc-v.cx,y2=PY[p+1]*v.sc-v.cy;
+    const dx=x2-x1,dy=y2-y1,l2=dx*dx+dy*dy;
+    let tt=l2?((mx-x1)*dx+(my-y1)*dy)/l2:0;tt=clamp(tt,0,1);
+    const ex=x1+tt*dx-mx,ey=y1+tt*dy-my,d=ex*ex+ey*ey;if(d<best)best=d;}
+  return Math.sqrt(best);}
+function hoverCheck(){tipPending=false;const v=engine.view();
+  const w=engine.unproj(mx,my);
+  const cx=(w.x/CELL)|0,cy=(w.y/CELL)|0;let best=-1,bd=8;
+  for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){
+    const arr=grid.get((cx+dx)+":"+(cy+dy));if(!arr)continue;
+    for(const i of arr){const d=segDistPx(i,v);if(d<bd){bd=d;best=i;}}}
+  if(best!==hoverSeg){hoverSeg=best;markDirty();
+    if(best<0){tip.style.display="none";}
+    else{const cls=CLS_OF[S.scen][best],cb=CB[best];
+      const nm=NMI[best]>=0?B.roads.names[NMI[best]]:"(이름 없는 도로)";
+      const hw=B.roads.highways[HWI[best]];
+      tip.innerHTML='<div class="tn">'+esc(nm)+'</div>'
+        +'<div class="tr">'+esc(HW_KO[hw]||hw)+" · "+(SRC[best]?"실측(도로명 평균)":"추정(등급 평균)")+"</div>"
+        +'<div style="margin-top:3px"><span class="dot" style="background:'+CLS_COLOR[cls]+'"></span>'
+        +CLS_NAME[cls]+(cls!==cb?' <span class="tr">(평시 '+CLS_NAME[cb]+" → "+CLS_NAME[cls]+")</span>":"")+"</div>";
+      tip.style.display="block";}}
+  if(best>=0){tip.style.left=Math.min(mx+14,W-250)+"px";
+    tip.style.top=Math.min(my+14,H-70)+"px";}}
+
+/* ═══ 10. 좌측 패널 ════════════════════════════════════════════ */
+$("#baseinfo").textContent=B.meta.baseline_note;
+const tabs=$("#tabs");
+SCENS.forEach(k=>{const b=document.createElement("button");
+  b.textContent=B.scenarios[k].label;b.setAttribute("role","tab");b.id="tab-"+k;
+  b.onclick=()=>setScen(k);tabs.appendChild(b);});
+tabs.addEventListener("keydown",e=>{
+  if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft")return;
+  const i=SCENS.indexOf(S.scen),d=e.key==="ArrowRight"?1:-1;
+  const n=SCENS[(i+d+4)%4];setScen(n);$("#tab-"+n).focus();e.preventDefault();});
+
+function statTrio(h){return '<div class="card hero">'
+  +'<div class="lbl">OD가중 평균 지연</div>'
+  +'<div class="val">+'+nf3.format(h.weighted_mean_delay_min)+'<span class="u">분</span></div>'
+  +'<div class="duo"><div><div class="lbl">상위 10% 가중</div><div class="val">+'
+  +nf3.format(h.top10pct_weighted_delay_min)+'<span class="u"> 분</span></div></div>'
+  +'<div><div class="lbl">P95</div><div class="val">+'+nf3.format(h.p95_weighted_delay_min)
+  +'<span class="u"> 분</span></div></div></div>'
+  +'<div class="cap mono">'+nf.format(h.n_pairs)+' OD쌍 · 평시 대비 지연</div></div>';}
+function decompBars(bc){const cats=[["same_zone","같은 존"],["inter_zone","존 간"],["external","외부"]];
+  const mx=Math.max(...cats.map(c=>bc[c[0]].weighted_mean_delay_min));
+  return '<div class="card"><div class="lbl" style="font-size:9.5px;letter-spacing:.1em;color:var(--dim)">3단 분해 — 평균 지연(분)</div>'
+    +'<div class="bars">'+cats.map(([k,lb])=>{const m=bc[k];
+      return '<div class="brow"><span class="bl">'+lb+' <span class="mono" style="font-size:8.5px">n='+nf.format(m.n_pairs)+'</span></span>'
+      +'<span class="bt"><span class="bf" style="width:'+(m.weighted_mean_delay_min/mx*100).toFixed(1)+'%"></span></span>'
+      +'<span class="bv">+'+nf3.format(m.weighted_mean_delay_min)+'</span></div>';}).join("")
+    +'</div></div>';}
+
+function renderMetrics(){const sc=S.scen,C=B.scenarios[sc],M=$("#metrics");
+  $("#shock").innerHTML='<div class="st">'+chips(C.scenario_desc||C.meta_status||"")+'</div>'
+    +'<div style="margin-top:3px">'+chips(C.shock)+"</div>";
+  if(sc==="tram"||sc==="snow"){
+    M.innerHTML=statTrio(C.headline)+'<div style="height:8px"></div>'+decompBars(C.by_category)
+      +'<div class="note">'+C.params.map(p=>'<span class="badge'+(p.assumption?' warn':'')+'">'
+      +(p.assumption?"가정치":"확정")+'</span> '+esc(p.label)+" <b>"+esc(p.value)+"</b>").join("<br>")+"</div>";
+  }else if(sc==="retail"){
+    M.innerHTML='<div class="card hero"><div class="lbl">소멸 수요 (T·f 선택값)</div>'
+      +'<div class="val" id="rt-hero"></div>'
+      +'<div class="bars" id="rt-bars" style="margin-top:9px"></div>'
+      +'<div class="ctl"><div class="klbl">시점 <span class="badge">사전계산 스냅</span></div>'
+      +'<div class="seg" id="rt-T" role="group" aria-label="시점 선택">'
+      +["T0","T1","T2"].map(t=>'<button aria-pressed="'+(S.T===t)+'" data-t="'+t+'">'+T_LBL[t]+"</button>").join("")+"</div></div>"
+      +'<div class="ctl"><div class="klbl">수요 흡수비중 f <span class="badge warn">가정치</span></div>'
+      +'<input type="range" id="rt-f" min="0" max="2" step="1" aria-label="수요 흡수비중 f">'
+      +'<div class="ticks"><span>0.3</span><span>0.4</span><span>0.5</span></div></div>'
+      +'<div class="note">'+chips(C.metric_note)+"</div></div>"
+      +'<div style="height:8px"></div><div class="card"><div class="lbl" style="font-size:9.5px;color:var(--dim);letter-spacing:.1em">부하 감소 상위 구간 (f=0.4 · 2026-01)</div>'
+      +'<div class="list">'+C.top10_load_reduction.map(r=>'<div class="r"><span>'+esc(r.road)
+      +'</span><span class="v">−'+nf1.format(r.reduction_pct)+"%</span></div>").join("")+"</div></div>";
+    $("#rt-f").value=["0.3","0.4","0.5"].indexOf(String(S.f));
+    $("#rt-f").addEventListener("input",e=>{S.f=C.f_values[+e.target.value];updateRetail();});
+    $("#rt-T").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+      S.T=b.dataset.t;$("#rt-T").querySelectorAll("button").forEach(x=>
+        x.setAttribute("aria-pressed",x===b));updateRetail();});
+    updateRetail();
+  }else{ /* yuseong */
+    M.innerHTML='<div class="card hero"><div class="lbl">발생 수요 스냅샷 (2031)</div>'
+      +'<div class="val" id="ys-hero"></div><div class="cap mono" id="ys-annual"></div>'
+      +'<div class="ctl"><div class="klbl">성장률 프록시 <span class="badge warn">가정치</span></div>'
+      +'<input type="range" id="ys-l" min="0" max="2" step="1" aria-label="성장률 프록시">'
+      +'<div class="ticks"><span>low</span><span>mid</span><span>high</span></div></div>'
+      +'<div class="note">'+chips(C.vehicle_conversion)+"</div></div>"
+      +'<div style="height:8px"></div><div class="card"><div class="lbl" style="font-size:9.5px;color:var(--dim);letter-spacing:.1em">불확실성 기여율 (low↔high 폭)</div>'
+      +'<div class="bars">'+Object.entries(C.sensitivity).map(([k,v])=>
+        '<div class="brow"><span class="bl" style="font-size:9px">'+esc(k)+'</span>'
+        +'<span class="bt"><span class="bf" style="width:'+v+'%"></span></span>'
+        +'<span class="bv">'+nf1.format(v)+"%</span></div>").join("")+"</div></div>"
+      +'<div style="height:8px"></div><div class="card"><div class="lbl" style="font-size:9.5px;color:var(--dim);letter-spacing:.1em">최근접 창고 연결 (직선 표시)</div>'
+      +'<div class="list" style="max-height:none">'+C.routes.map(r=>'<div class="r"><span>'+esc(r.warehouse)
+      +'</span><span class="v">'+nf1.format(r.travel_time_min)+"분 · "+nf1.format(r.dist_km)+"km</span></div>").join("")+"</div>"
+      +'<div class="note">'+chips("[확인 필요] 소멸(2026H2): "+C.demolition)+"</div>"
+      +'<div class="note">'+chips(C.timing_note)+"</div></div>";
+    $("#ys-l").value=["low","mid","high"].indexOf(S.yus);
+    $("#ys-l").addEventListener("input",e=>{S.yus=["low","mid","high"][+e.target.value];updateYus();});
+    updateYus();}
+  $("#finding").innerHTML="<b>핵심 소견</b> — "+esc(B.scenarios[sc].key_finding);}
+function updateRetail(){const C=B.scenarios.retail,g=C.removed_demand_veh_day[T_KEY[S.T]]["f="+S.f];
+  const tot=g["서대전점"]+g["문화+세이 복합"];
+  $("#rt-hero").innerHTML="−"+nf1.format(tot)+'<span class="u">대/일</span>';
+  const mx=Math.max(g["서대전점"],g["문화+세이 복합"],1);
+  $("#rt-bars").innerHTML=Object.entries(g).map(([k,v])=>
+    '<div class="brow"><span class="bl">'+esc(k)+'</span>'
+    +'<span class="bt"><span class="bf" style="width:'+(v/mx*100).toFixed(1)+'%"></span></span>'
+    +'<span class="bv">−'+nf1.format(v)+"</span></div>").join("");}
+function updateYus(){const C=B.scenarios.yuseong;
+  $("#ys-hero").innerHTML=nf.format(Math.round(C.daily_demand[S.yus]))+'<span class="u">건/일</span>';
+  $("#ys-annual").textContent="= "+nf.format(C.annual_demand[S.yus])+" 건/년 ("+S.yus+")";}
+
+/* greedy 패널 */
+function renderGreedy(){const G=B.greedy[S.scen],el=$("#greedy");
+  if(!G){el.innerHTML='<div class="note" style="border:1px dashed var(--line);padding:8px">이 시나리오는 수요 주입·제거 <b>스냅샷</b>입니다 — 지연·개입(greedy) 지표를 산출하지 않습니다.</div>';return;}
+  el.innerHTML='<div class="card">'
+    +'<div class="klbl"><span class="sw" style="width:9px;height:9px;background:var(--amber);display:inline-block;border-radius:1px"></span>'
+    +' 개입 시뮬레이션 — 증설 TOP-K <span class="badge warn">가정치</span></div>'
+    +'<div class="ksub">'+chips(G.upgrade_assumption)+"</div>"
+    +'<input type="range" id="kslider" min="1" max="5" step="1" aria-label="개입 개수 K">'
+    +'<div class="ticks"><span>K=1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>'
+    +'<div class="kread"><span class="sw"></span><span class="val" id="ksaved"></span>'
+    +'<span class="u">차량·분/일 절감</span><span id="kderived"></span></div>'
+    +'<div class="ksub" id="kobj"></div>'
+    +'<svg id="traj" viewBox="0 0 280 44" preserveAspectRatio="none" aria-hidden="true"></svg>'
+    +'<div class="picks" id="plist"></div></div>';
+  const sl=$("#kslider");sl.value=S.K;
+  sl.addEventListener("input",e=>{const nk=+e.target.value;
+    if(nk>S.K){const from=S.K;S.K=nk;startGreedyAdd(from);}else{S.K=nk;markDirty();}
+    updateGreedy();});
+  updateGreedy();}
+function updateGreedy(){const G=B.greedy[S.scen];if(!G)return;
+  const tr=G.trajectory[String(S.K)];
+  $("#ksaved").textContent=nf.format(Math.round(tr.saved_abs_veh_min_day));
+  $("#kderived").innerHTML=tr.derived?'<span class="badge derived" title="원본에 저장된 K=1,2,3,5 사이 값 — 한계이득 누적으로 유도">유도값</span>':"";
+  $("#kobj").textContent="목적함수 "+nf1.format(tr.objective_veh_h_day)+" 차량·h/일 (기준 "
+    +nf1.format(G.baseline_objective_veh_h_day)+", −"+tr.improvement_pct.toFixed(3)+"%)";
+  /* 궤적 스파크 */
+  const vals=[1,2,3,4,5].map(k=>G.trajectory[String(k)].saved_abs_veh_min_day);
+  const mx=vals[4],pts=vals.map((sv,i)=>[14+i*63,38-sv/mx*28]);
+  $("#traj").innerHTML='<polyline fill="none" stroke="rgba(139,147,161,.5)" stroke-width="1.5" points="'
+    +pts.map(p=>p.join(",")).join(" ")+'"/>'
+    +pts.map((p,i)=>'<circle data-k="'+(i+1)+'" cx="'+p[0]+'" cy="'+p[1]+'" r="'+(i+1===S.K?5:3.5)
+      +'" fill="'+(i+1<=S.K?"#F2C744":"#11151B")+'" stroke="'+(i+1<=S.K?"#F2C744":"#8B93A1")
+      +'" stroke-width="1.5" style="cursor:pointer"/>').join("");
+  $("#traj").onclick=e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;
+    const nk=+k,from=S.K;if(nk>from){S.K=nk;startGreedyAdd(from);}else{S.K=nk;markDirty();}
+    $("#kslider").value=nk;updateGreedy();};
+  $("#plist").innerHTML=G.picks.map((p,i)=>'<div class="p'+(i+1>S.K?" off":"")+'"><b>'+(i+1)+"</b>"
+    +'<span>'+esc(p.highway)+" · "+nf.format(Math.round(p.length_m))+'m</span>'
+    +'<span class="pv">+'+nf1.format(p.marginal_gain_veh_h_day)+" 차량·h/일</span></div>").join("");}
+
+/* ═══ 11. 우측 패널 ════════════════════════════════════════════ */
+function legendRow(sw,txt){return '<div class="l"><span>'+sw+"</span><span>"+txt+"</span></div>";}
+const lsvg=(c,w,dash)=>'<svg width="30" height="8"><line x1="1" y1="4" x2="29" y2="4" stroke="'
+  +c+'" stroke-width="'+w+'"'+(dash?' stroke-dasharray="'+dash+'"':"")+' stroke-linecap="round"/></svg>';
+function renderLegend(){const sc=S.scen;let h="";
+  h+=legendRow(lsvg("#3FA66B",2),"원활 <span class='mono'>(가늘게)</span>");
+  h+=legendRow(lsvg("#E0A93A",3),"서행");
+  h+=legendRow(lsvg("#D14B3D",4),"정체 <span class='mono'>(굵게)</span>");
+  h+=legendRow(lsvg("#F2C744",4.5),"greedy 증설 추천 (K 슬라이더)");
+  h+=legendRow('<svg width="30" height="10"><circle cx="15" cy="5" r="4" fill="#4FC7D9"/></svg>',"충격 지점");
+  if(sc==="tram"){h+=legendRow(lsvg("#4FC7D9",1.5,"2,5"),"트램 공구 연결선(도식)");
+    h+=legendRow('<svg width="30" height="12"><circle cx="15" cy="6" r="5" fill="rgba(79,199,217,.1)" stroke="rgba(79,199,217,.6)"/></svg>',"영향 반경 500m <span class='badge warn'>가정치</span>");}
+  if(sc==="retail")h+=legendRow(lsvg("#4FC7D9",2.4,"5,3"),"부하 감소 상위 10구간");
+  if(sc==="yuseong")h+=legendRow(lsvg("#4FC7D9",1.4,"3,5"),"최근접 창고 연결(직선 표시)");
+  h+=legendRow('<svg width="30" height="10"><rect x="12" y="2" width="6" height="6" transform="rotate(45 15 5)" fill="#8B93A1" opacity=".6"/></svg>',"물류창고 43곳");
+  $("#legend").innerHTML=h;}
+{const r=B.meta.congestion_display_rule;
+$("#disprule").innerHTML=chips("[표시용 가정치] 3색 = 간선 속도 구간화 · 원활 ≥"+r.t1_kmh
+  +" / 서행 "+r.t2_kmh+"–"+r.t1_kmh+" / 정체 <"+r.t2_kmh+" km/h")
+  +'<br><span class="mono" style="font-size:9px">실측 링크 '+nf.format(r.n_obs_links)
+  +"건 대비 일치율 "+r.agreement_pct+"%</span><br>"+chips(B.meta.graph_note);
+const cc=B.cross_cutting,ttl={"가정치":"가정치","확인_필요":"확인 필요","검증됨":"검증됨"};
+$("#crosscut").innerHTML=Object.entries(cc).map(([k,arr])=>
+  "<details"+(k==="가정치"?" open":"")+"><summary>"+ttl[k]
+  +' <span class="n">'+arr.length+"</span></summary><ul>"
+  +arr.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul></details>").join("");
+$("#attr").textContent=B.meta.attribution+" · 번들 "+B.meta.built;}
+
+/* ═══ 12. 시나리오 전환 ════════════════════════════════════════ */
+function setScen(k,full){if(S.scen===k&&!full)return;
+  S.scen=k;
+  tabs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.id==="tab-"+k));
+  wrap.classList.toggle("snow",k==="snow");
+  hoverSeg=-1;tip.style.display="none";
+  renderMetrics();renderGreedy();renderLegend();buildMarkers();
+  startBoot(!!full);}
+$("#replay").onclick=()=>{resetMarkers();startBoot(true);};
+
+/* 초기 구동 */
+setScen(S.scen,true);
+}
+</script>
+</body>
+</html>
