@@ -160,7 +160,33 @@ input[type=range]{width:100%;accent-color:var(--cyan);height:20px;cursor:pointer
 #fatal code{font-family:var(--mono);color:var(--cyan);font-size:11px}
 #errband{position:fixed;top:0;left:0;right:0;z-index:1900;display:none;background:rgba(209,75,61,.92);color:#fff;
   font:500 10.5px var(--mono);padding:5px 10px}
-@media (max-width:1080px){#app{grid-template-columns:280px 1fr 220px}}
+/* ── 좌측 패널 접기 / 우측 패널 서랍화 ─────────────────────────────
+   둘 다 지도 위에 뜨는 오버레이(position:fixed)로 처리 — 지도(#wrap)
+   자체 크기는 절대 안 바뀌므로 여닫을 때 ResizeObserver發 캔버스
+   전체 재렌더(렉의 원인)가 안 일어남 */
+#app{position:relative;height:100vh;overflow:hidden}
+#wrap{position:absolute;inset:0}
+
+#left{position:fixed;top:0;left:0;height:100vh;width:322px;z-index:800;background:var(--bg);
+  transform:translateX(0);transition:transform .22s ease;box-shadow:8px 0 24px rgba(0,0,0,.35)}
+#app.left-collapsed #left{transform:translateX(-100%)}
+@media (max-width:1080px){#left{width:280px}}
+
+#right{position:fixed;top:0;right:0;height:100vh;width:268px;z-index:800;background:var(--bg);
+  transform:translateX(100%);transition:transform .22s ease;box-shadow:-8px 0 24px rgba(0,0,0,.35)}
+#app.right-open #right{transform:translateX(0)}
+@media (max-width:1080px){#right{width:220px}}
+
+#rbackdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:750;display:none}
+#app.right-open #rbackdrop{display:block}
+
+.paneltoggle{position:fixed;z-index:900;display:flex;align-items:center;justify-content:center;
+  font:600 13px var(--mono);color:var(--ink);background:rgba(17,21,27,.92);border:1px solid var(--line);cursor:pointer}
+.paneltoggle:hover{color:var(--cyan);border-color:var(--cyan)}
+#leftToggle{left:322px;top:50%;width:22px;height:84px;transform:translateY(-50%);transition:left .22s ease}
+#app.left-collapsed #leftToggle{left:0!important}
+@media (max-width:1080px){#leftToggle{left:280px}#app.left-collapsed #leftToggle{left:0!important}}
+#rightToggle{right:8px;top:8px;width:26px;height:26px}
 </style>
 </head>
 <body>
@@ -190,7 +216,10 @@ input[type=range]{width:100%;accent-color:var(--cyan);height:20px;cursor:pointer
     <div id="fbchip">FALLBACK PAN/ZOOM MODE</div>
     <button id="replay" title="부팅 시퀀스 재생">⟳ REPLAY BOOT</button>
     <div id="tip" role="status"></div>
+    <button id="leftToggle" class="paneltoggle" aria-label="좌측 패널 접기/펼치기" aria-expanded="true">‹</button>
+    <button id="rightToggle" class="paneltoggle" aria-label="범례 패널 열기/닫기" aria-expanded="false">☰</button>
   </main>
+  <div id="rbackdrop"></div>
 
   <aside id="right" aria-label="범례 및 안내">
     <div id="rscroll">
@@ -802,6 +831,18 @@ function setScen(k,full){if(S.scen===k&&!full)return;
   renderMetrics();renderGreedy();renderLegend();buildMarkers();
   startBoot(!!full);}
 $("#replay").onclick=()=>{resetMarkers();startBoot(true);};
+
+/* ═══ 13. 패널 접기/서랍 토글 ═══════════════════════════════════ */
+const appEl=$("#app");
+function syncLeftTogglePos(){$("#leftToggle").style.left=appEl.classList.contains("left-collapsed")?
+  "0px":(matchMedia("(max-width:1080px)").matches?"280px":"322px");}
+$("#leftToggle").onclick=()=>{const on=appEl.classList.toggle("left-collapsed");
+  $("#leftToggle").textContent=on?"›":"‹";$("#leftToggle").setAttribute("aria-expanded",!on);syncLeftTogglePos();};
+syncLeftTogglePos();
+$("#rightToggle").onclick=()=>{const on=appEl.classList.toggle("right-open");
+  $("#rightToggle").textContent=on?"✕":"☰";$("#rightToggle").setAttribute("aria-expanded",on);};
+$("#rbackdrop").onclick=()=>{appEl.classList.remove("right-open");
+  $("#rightToggle").textContent="☰";$("#rightToggle").setAttribute("aria-expanded",false);};
 
 /* 초기 구동 */
 setScen(S.scen,true);
