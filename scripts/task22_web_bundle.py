@@ -170,7 +170,10 @@ def main():
         return 1 if speed >= t1 else 2 if speed >= t2 else 3
 
     nodes, edges = parse_graph(DP / "daejeon_weighted.graphml")
-    print(f"그래프: 노드 {len(nodes):,} / 방향 간선 {len(edges):,} ({time.time()-t0:.0f}초)")
+    n_matched_edges = sum(1 for e in edges if e["src"] == "traffic_link")
+    matched_edge_pct = round(n_matched_edges / len(edges) * 100, 1)
+    print(f"그래프: 노드 {len(nodes):,} / 방향 간선 {len(edges):,} "
+          f"(실측매칭 {n_matched_edges:,}, {matched_edge_pct}%) ({time.time()-t0:.0f}초)")
 
     # ── 2) 물리 세그먼트로 병합 + 시나리오별 표시 클래스 ─────────────
     seg_map = {}   # (a,b,key,len_round) -> seg dict
@@ -414,7 +417,7 @@ def main():
                 "note": "[표시용 가정치] 지도 3색은 간선 speed_kph를 실측 링크 보정 임계값으로 "
                         "구간화한 것 — 모델 지표(지연 등)와 별개의 표시 규칙",
             },
-            "graph_note": "실측 매칭은 도로명 단위 평균속도 (전체 간선의 23.6%) / 나머지 "
+            "graph_note": f"실측 매칭은 도로명 단위 평균속도 (전체 간선의 {matched_edge_pct}%) / 나머지 "
                           "osmnx 등급별 평균 imputation [가정치]",
             "counts": {"segments": len(segments), "directed_edges": len(edges),
                        "nodes": len(nodes)},

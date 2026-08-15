@@ -40,7 +40,20 @@ for osm_name, link_name in ALIAS.items():
     if link_name in road_speed and osm_name not in road_speed:
         road_speed[osm_name] = road_speed[link_name]
         n_alias += 1
-print(f"교통링크 도로명 {len(road_speed)}개 (유효속도 링크 기반, 별칭 {n_alias}건 추가)")
+
+# 동명이도로 배제 [확인됨, 2026-08]: OSM에서 5km 이상 떨어진 서로 다른 실제 도로가
+# 같은 이름을 공유 — 대학로(유성구 어은동/동구 용운동), 동서대로(중구 용두동 도심
+# 대간선/유성구 덕명동 외곽 소구간). 실측 링크는 교차로명만 있고 좌표가 없어 어느
+# 물리적 도로의 관측인지 판별 불가(동서대로 실측 7건은 교차로명 지오코딩상 덕명동
+# 소구간으로 추정되나 확정 불가) → 이름 매칭에서 제외, 표준 임퓨테이션으로 폴백
+AMBIGUOUS_NAMES = {"대학로", "동서대로"}
+n_ambiguous_removed = 0
+for nm in AMBIGUOUS_NAMES:
+    if nm in road_speed:
+        del road_speed[nm]
+        n_ambiguous_removed += 1
+print(f"교통링크 도로명 {len(road_speed)}개 (유효속도 링크 기반, 별칭 {n_alias}건 추가, "
+      f"동명이도로 배제 {n_ambiguous_removed}건: {sorted(AMBIGUOUS_NAMES)})")
 
 n_match, n_total = 0, 0
 for u, v, k, d in G.edges(keys=True, data=True):

@@ -96,86 +96,86 @@
    "reduction_pct": 100.0
   },
   {
+   "edge": "307688090_8946186851",
+   "road": "대정남로",
+   "highway": "tertiary",
+   "load_before": 245.3,
+   "load_after": 0.0,
+   "reduction_abs": 245.3,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "538800936_382917290",
+   "road": "유성대로",
+   "highway": "tertiary",
+   "load_before": 241.1,
+   "load_after": 0.0,
+   "reduction_abs": 241.1,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "307688084_538800936",
+   "road": "유성대로",
+   "highway": "tertiary",
+   "load_before": 241.1,
+   "load_after": 0.0,
+   "reduction_abs": 241.1,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "382917315_307688084",
+   "road": "유성대로",
+   "highway": "tertiary",
+   "load_before": 241.1,
+   "load_after": 0.0,
+   "reduction_abs": 241.1,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "526753586_382917315",
+   "road": "유성대로",
+   "highway": "tertiary",
+   "load_before": 241.1,
+   "load_after": 0.0,
+   "reduction_abs": 241.1,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "526753584_526753586",
+   "road": "유성대로",
+   "highway": "tertiary",
+   "load_before": 241.1,
+   "load_after": 0.0,
+   "reduction_abs": 241.1,
+   "reduction_pct": 100.0
+  },
+  {
+   "edge": "8946186894_526753584",
+   "road": "유성대로",
+   "highway": "tertiary",
+   "load_before": 241.1,
+   "load_after": 0.0,
+   "reduction_abs": 241.1,
+   "reduction_pct": 100.0
+  },
+  {
    "edge": "436816948_599910187",
    "road": "계룡로904번길",
    "highway": "residential",
-   "load_before": 152.2,
+   "load_before": 140.3,
    "load_after": 0.0,
-   "reduction_abs": 152.2,
-   "reduction_pct": 100.0
-  },
-  {
-   "edge": "599910228_436816948",
-   "road": "계백로1686번길",
-   "highway": "residential",
-   "load_before": 152.2,
-   "load_after": 0.0,
-   "reduction_abs": 152.2,
-   "reduction_pct": 100.0
-  },
-  {
-   "edge": "436816949_599910187",
-   "road": "계룡로904번길",
-   "highway": "residential",
-   "load_before": 100.4,
-   "load_after": 0.0,
-   "reduction_abs": 100.4,
-   "reduction_pct": 100.0
-  },
-  {
-   "edge": "307687729_436816949",
-   "road": "계룡로904번길",
-   "highway": "residential",
-   "load_before": 100.4,
-   "load_after": 0.0,
-   "reduction_abs": 100.4,
-   "reduction_pct": 100.0
-  },
-  {
-   "edge": "599910285_307687729",
-   "road": "계룡로904번길",
-   "highway": "residential",
-   "load_before": 100.4,
-   "load_after": 0.0,
-   "reduction_abs": 100.4,
-   "reduction_pct": 100.0
-  },
-  {
-   "edge": "599910286_599910285",
-   "road": "계룡로904번길",
-   "highway": "residential",
-   "load_before": 100.4,
-   "load_after": 0.0,
-   "reduction_abs": 100.4,
-   "reduction_pct": 100.0
-  },
-  {
-   "edge": "599910206_599910286",
-   "road": "계룡로904번안길",
-   "highway": "residential",
-   "load_before": 100.4,
-   "load_after": 0.0,
-   "reduction_abs": 100.4,
-   "reduction_pct": 100.0
-  },
-  {
-   "edge": "599910218_599910206",
-   "road": "계룡로904번안길",
-   "highway": "residential",
-   "load_before": 100.4,
-   "load_after": 0.0,
-   "reduction_abs": 100.4,
+   "reduction_abs": 140.3,
    "reduction_pct": 100.0
   }
  ],
  "greedy_on_remaining_demand": {
-  "baseline_objective_veh_h_day": 36664.6,
+  "baseline_objective_veh_h_day": 36058.8,
   "picks": [
    {
     "segment_id": "318361357_559374636_0",
     "highway": "residential",
     "length_m": 412.8,
-    "marginal_gain_veh_h_day": 73.89,
+    "marginal_gain_veh_h_day": 68.85,
     "coord_a": [
      36.3331268,
      127.3865692
@@ -203,7 +203,7 @@
     "segment_id": "559374637_559374639_0",
     "highway": "residential",
     "length_m": 133.4,
-    "marginal_gain_veh_h_day": 36.84,
+    "marginal_gain_veh_h_day": 36.27,
     "coord_a": [
      36.3353942,
      127.3828788
@@ -231,7 +231,7 @@
     "segment_id": "4838045464_4838045469_0",
     "highway": "residential",
     "length_m": 258.1,
-    "marginal_gain_veh_h_day": 22.28,
+    "marginal_gain_veh_h_day": 20.06,
     "coord_a": [
      36.3203444,
      127.4467358
@@ -244,31 +244,31 @@
   ],
   "trajectory": {
    "K=1": {
-    "objective_veh_h_day": 36590.7,
-    "improvement_pct": 0.202,
-    "saved_abs_veh_min_day": 4434.0
+    "objective_veh_h_day": 35989.9,
+    "improvement_pct": 0.191,
+    "saved_abs_veh_min_day": 4131.0
    },
    "K=2": {
-    "objective_veh_h_day": 36534.4,
-    "improvement_pct": 0.355,
-    "saved_abs_veh_min_day": 7809.0
+    "objective_veh_h_day": 35933.7,
+    "improvement_pct": 0.347,
+    "saved_abs_veh_min_day": 7506.0
    },
    "K=3": {
-    "objective_veh_h_day": 36497.6,
-    "improvement_pct": 0.455,
-    "saved_abs_veh_min_day": 10019.0
+    "objective_veh_h_day": 35897.4,
+    "improvement_pct": 0.448,
+    "saved_abs_veh_min_day": 9683.0
    },
    "K=5": {
-    "objective_veh_h_day": 36446.7,
-    "improvement_pct": 0.594,
-    "saved_abs_veh_min_day": 13076.0
+    "objective_veh_h_day": 35848.6,
+    "improvement_pct": 0.583,
+    "saved_abs_veh_min_day": 12607.0
    }
   }
  },
  "posthoc_audit_top10": [
   {
    "segment_id": "318361357_559374636_0",
-   "gain_veh_h_day": 73.89,
+   "gain_veh_h_day": 68.85,
    "within_2km_of_site": false,
    "on_baseline_path": true,
    "suspect_flag": false
@@ -281,6 +281,13 @@
    "suspect_flag": false
   },
   {
+   "segment_id": "559374638_559374639_0",
+   "gain_veh_h_day": 29.47,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
+  },
+  {
    "segment_id": "382917291_382917292_0",
    "gain_veh_h_day": 28.67,
    "within_2km_of_site": true,
@@ -288,22 +295,8 @@
    "suspect_flag": false
   },
   {
-   "segment_id": "559374638_559374639_0",
-   "gain_veh_h_day": 25.68,
-   "within_2km_of_site": false,
-   "on_baseline_path": true,
-   "suspect_flag": false
-  },
-  {
    "segment_id": "4838045464_4838045469_0",
-   "gain_veh_h_day": 22.28,
-   "within_2km_of_site": false,
-   "on_baseline_path": true,
-   "suspect_flag": false
-  },
-  {
-   "segment_id": "559374637_559374639_0",
-   "gain_veh_h_day": 21.39,
+   "gain_veh_h_day": 20.06,
    "within_2km_of_site": false,
    "on_baseline_path": true,
    "suspect_flag": false
@@ -323,8 +316,8 @@
    "suspect_flag": false
   },
   {
-   "segment_id": "526753004_526753230_0",
-   "gain_veh_h_day": 17.69,
+   "segment_id": "315811483_559374638_0",
+   "gain_veh_h_day": 17.42,
    "within_2km_of_site": false,
    "on_baseline_path": true,
    "suspect_flag": false
@@ -335,10 +328,17 @@
    "within_2km_of_site": false,
    "on_baseline_path": false,
    "suspect_flag": true
+  },
+  {
+   "segment_id": "526753004_526753230_0",
+   "gain_veh_h_day": 17.07,
+   "within_2km_of_site": false,
+   "on_baseline_path": true,
+   "suspect_flag": false
   }
  ],
  "flow_validation": {
-  "spearman_load_vs_congestion_T2": -0.055,
-  "n_common_roads": 114
+  "spearman_load_vs_congestion_T2": -0.044,
+  "n_common_roads": 110
  }
 }

@@ -11,17 +11,17 @@
    {
     "warehouse": "대전광역시서구전통시장상인협동조합",
     "dist_km": 3.73,
-    "travel_time_min": 10.82
+    "travel_time_min": 9.54
    },
    {
     "warehouse": "SK네트웍스(주) 대전지사",
     "dist_km": 4.56,
-    "travel_time_min": 9.25
+    "travel_time_min": 9.08
    },
    {
     "warehouse": "(주)한진 대전중부지점",
     "dist_km": 4.69,
-    "travel_time_min": 8.99
+    "travel_time_min": 8.81
    }
   ]
  },
@@ -42,17 +42,17 @@
    {
     "warehouse": "대전광역시서구전통시장상인협동조합",
     "dist_km": 3.73,
-    "travel_time_min": 10.82
+    "travel_time_min": 9.54
    },
    {
     "warehouse": "SK네트웍스(주) 대전지사",
     "dist_km": 4.56,
-    "travel_time_min": 9.25
+    "travel_time_min": 9.08
    },
    {
     "warehouse": "(주)한진 대전중부지점",
     "dist_km": 4.69,
-    "travel_time_min": 8.99
+    "travel_time_min": 8.81
    }
   ]
  },

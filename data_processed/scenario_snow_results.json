@@ -12,26 +12,26 @@
  },
  "delay": {
   "headline": {
-   "weighted_mean_delay_min": 4.802,
-   "top10pct_weighted_delay_min": 10.869,
-   "p95_weighted_delay_min": 9.869,
+   "weighted_mean_delay_min": 4.732,
+   "top10pct_weighted_delay_min": 10.958,
+   "p95_weighted_delay_min": 9.941,
    "n_pairs": 3019
   },
   "by_category": {
    "same_zone": {
-    "weighted_mean_delay_min": 4.964,
-    "top10pct_weighted_delay_min": 10.295,
-    "p95_weighted_delay_min": 10.177,
+    "weighted_mean_delay_min": 4.854,
+    "top10pct_weighted_delay_min": 10.233,
+    "p95_weighted_delay_min": 10.171,
     "n_pairs": 492
    },
    "inter_zone": {
-    "weighted_mean_delay_min": 5.966,
-    "top10pct_weighted_delay_min": 10.983,
-    "p95_weighted_delay_min": 10.582,
+    "weighted_mean_delay_min": 5.875,
+    "top10pct_weighted_delay_min": 11.302,
+    "p95_weighted_delay_min": 10.671,
     "n_pairs": 2460
    },
    "external": {
-    "weighted_mean_delay_min": 3.937,
+    "weighted_mean_delay_min": 3.936,
     "top10pct_weighted_delay_min": 8.232,
     "p95_weighted_delay_min": 8.673,
     "n_pairs": 67
@@ -40,7 +40,7 @@
   "n_skipped": 5
  },
  "greedy": {
-  "baseline_objective_veh_h_day": 51572.8,
+  "baseline_objective_veh_h_day": 50752.2,
   "picks": [
    {
     "segment_id": "559374632_559374639_0",
@@ -60,7 +60,7 @@
     "segment_id": "318361357_559374636_0",
     "highway": "residential",
     "length_m": 412.8,
-    "marginal_gain_veh_h_day": 60.05,
+    "marginal_gain_veh_h_day": 51.73,
     "coord_a": [
      36.3331268,
      127.3865692
@@ -74,7 +74,7 @@
     "segment_id": "559374637_559374639_0",
     "highway": "residential",
     "length_m": 133.4,
-    "marginal_gain_veh_h_day": 51.3,
+    "marginal_gain_veh_h_day": 50.32,
     "coord_a": [
      36.3353942,
      127.3828788
@@ -115,24 +115,24 @@
   ],
   "trajectory": {
    "K=1": {
-    "objective_veh_h_day": 51478.4,
-    "improvement_pct": 0.183,
+    "objective_veh_h_day": 50657.8,
+    "improvement_pct": 0.186,
     "saved_abs_veh_min_day": 5664.0
    },
    "K=2": {
-    "objective_veh_h_day": 51418.4,
-    "improvement_pct": 0.299,
-    "saved_abs_veh_min_day": 9267.0
+    "objective_veh_h_day": 50606.1,
+    "improvement_pct": 0.288,
+    "saved_abs_veh_min_day": 8768.0
    },
    "K=3": {
-    "objective_veh_h_day": 51367.1,
-    "improvement_pct": 0.399,
-    "saved_abs_veh_min_day": 12345.0
+    "objective_veh_h_day": 50555.8,
+    "improvement_pct": 0.387,
+    "saved_abs_veh_min_day": 11788.0
    },
    "K=5": {
-    "objective_veh_h_day": 51288.5,
-    "improvement_pct": 0.551,
-    "saved_abs_veh_min_day": 17062.0
+    "objective_veh_h_day": 50477.2,
+    "improvement_pct": 0.542,
+    "saved_abs_veh_min_day": 16504.0
    }
   },
   "upgrade_assumption": "[가정치] travel_time -30%"
@@ -149,7 +149,7 @@
   {
    "segment_id": "318361357_559374636_0",
    "highway": "residential",
-   "gain_veh_h_day": 60.05,
+   "gain_veh_h_day": 51.73,
    "adjacent_to_high_reduction_class": true,
    "on_baseline_path": true,
    "suspect_flag": false
@@ -165,7 +165,7 @@
   {
    "segment_id": "559374639_11993592727_0",
    "highway": "residential",
-   "gain_veh_h_day": 34.3,
+   "gain_veh_h_day": 38.0,
    "adjacent_to_high_reduction_class": true,
    "on_baseline_path": true,
    "suspect_flag": false
@@ -211,9 +211,9 @@
    "suspect_flag": false
   },
   {
-   "segment_id": "4838045464_4838045469_0",
+   "segment_id": "388475791_388475837_0",
    "highway": "residential",
-   "gain_veh_h_day": 25.98,
+   "gain_veh_h_day": 25.76,
    "adjacent_to_high_reduction_class": true,
    "on_baseline_path": true,
    "suspect_flag": false
@@ -221,8 +221,8 @@
  ],
  "audit_note": "[가정치] 인접 기준을 '-40% 등급 간선과 노드 공유'로 대체 — 후보가 대부분 residential(-40% 등급)이라 이 기준의 판별력은 낮음",
  "flow_validation": {
-  "spearman_load_vs_congestion": -0.085,
-  "n_common_roads": 108,
+  "spearman_load_vs_congestion": -0.1,
+  "n_common_roads": 107,
   "congestion_direction": "[검증됨] 숫자 클수록 정체"
  }
 }

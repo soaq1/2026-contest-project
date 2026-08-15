@@ -5,22 +5,8 @@
   "upgrade": "[가정치] 현재 travel_time × 0.7 (30% 감소, 민감도 분석 대상)",
   "audit_rule": "[가정치] 트램 2km 이내 & 베이스라인 경로 등장 기준"
  },
- "baseline_objective_veh_h_day": 38572.5,
+ "baseline_objective_veh_h_day": 37906.2,
  "greedy_picks": [
-  {
-   "segment_id": "318361357_559374636_0",
-   "highway": "residential",
-   "length_m": 412.8,
-   "marginal_gain_veh_h_day": 57.3,
-   "coord_a": [
-    36.3331268,
-    127.3865692
-   ],
-   "coord_b": [
-    36.3357998,
-    127.3833715
-   ]
-  },
   {
    "segment_id": "559374632_559374639_0",
    "highway": "residential",
@@ -36,10 +22,24 @@
    ]
   },
   {
+   "segment_id": "318361357_559374636_0",
+   "highway": "residential",
+   "length_m": 412.8,
+   "marginal_gain_veh_h_day": 53.09,
+   "coord_a": [
+    36.3331268,
+    127.3865692
+   ],
+   "coord_b": [
+    36.3357998,
+    127.3833715
+   ]
+  },
+  {
    "segment_id": "317557160_436781183_0",
    "highway": "residential",
    "length_m": 213.4,
-   "marginal_gain_veh_h_day": 38.86,
+   "marginal_gain_veh_h_day": 37.54,
    "coord_a": [
     36.3719889,
     127.4242633
@@ -53,7 +53,7 @@
    "segment_id": "340162555_436781183_0",
    "highway": "residential",
    "length_m": 187.9,
-   "marginal_gain_veh_h_day": 37.3,
+   "marginal_gain_veh_h_day": 36.94,
    "coord_a": [
     36.3738263,
     127.4261456
@@ -67,7 +67,7 @@
    "segment_id": "559374637_559374639_0",
    "highway": "residential",
    "length_m": 133.4,
-   "marginal_gain_veh_h_day": 32.37,
+   "marginal_gain_veh_h_day": 31.07,
    "coord_a": [
     36.3353942,
     127.3828788
@@ -80,36 +80,27 @@
  ],
  "objective_trajectory": {
   "K=1": {
-   "objective_veh_h_day": 38515.2,
+   "objective_veh_h_day": 37849.5,
    "improvement_pct": 0.149,
-   "saved_abs_veh_min_day": 3438.0
+   "saved_abs_veh_min_day": 3399.0
   },
   "K=2": {
-   "objective_veh_h_day": 38458.5,
-   "improvement_pct": 0.295,
-   "saved_abs_veh_min_day": 6837.0
+   "objective_veh_h_day": 37796.4,
+   "improvement_pct": 0.289,
+   "saved_abs_veh_min_day": 6584.0
   },
   "K=3": {
-   "objective_veh_h_day": 38419.7,
-   "improvement_pct": 0.396,
-   "saved_abs_veh_min_day": 9168.0
+   "objective_veh_h_day": 37758.9,
+   "improvement_pct": 0.389,
+   "saved_abs_veh_min_day": 8836.0
   },
   "K=5": {
-   "objective_veh_h_day": 38350.0,
-   "improvement_pct": 0.577,
-   "saved_abs_veh_min_day": 13348.0
+   "objective_veh_h_day": 37690.9,
+   "improvement_pct": 0.568,
+   "saved_abs_veh_min_day": 12917.0
   }
  },
  "posthoc_audit_top10": [
-  {
-   "segment_id": "318361357_559374636_0",
-   "highway": "residential",
-   "gain_veh_h_day": 57.3,
-   "dist_to_tram_km": 2.04,
-   "on_baseline_path": true,
-   "gain_positive(신경로 등장)": true,
-   "suspect_flag": false
-  },
   {
    "segment_id": "559374632_559374639_0",
    "highway": "residential",
@@ -120,9 +111,18 @@
    "suspect_flag": false
   },
   {
+   "segment_id": "318361357_559374636_0",
+   "highway": "residential",
+   "gain_veh_h_day": 53.09,
+   "dist_to_tram_km": 2.04,
+   "on_baseline_path": true,
+   "gain_positive(신경로 등장)": true,
+   "suspect_flag": false
+  },
+  {
    "segment_id": "317557160_436781183_0",
    "highway": "residential",
-   "gain_veh_h_day": 38.86,
+   "gain_veh_h_day": 37.54,
    "dist_to_tram_km": 0.35,
    "on_baseline_path": true,
    "gain_positive(신경로 등장)": true,
@@ -131,8 +131,17 @@
   {
    "segment_id": "340162555_436781183_0",
    "highway": "residential",
-   "gain_veh_h_day": 34.0,
+   "gain_veh_h_day": 32.76,
    "dist_to_tram_km": 0.29,
+   "on_baseline_path": true,
+   "gain_positive(신경로 등장)": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "559374638_559374639_0",
+   "highway": "residential",
+   "gain_veh_h_day": 30.05,
+   "dist_to_tram_km": 2.19,
    "on_baseline_path": true,
    "gain_positive(신경로 등장)": true,
    "suspect_flag": false
@@ -149,26 +158,8 @@
   {
    "segment_id": "4838045464_4838045469_0",
    "highway": "residential",
-   "gain_veh_h_day": 27.51,
+   "gain_veh_h_day": 25.34,
    "dist_to_tram_km": 0.91,
-   "on_baseline_path": true,
-   "gain_positive(신경로 등장)": true,
-   "suspect_flag": false
-  },
-  {
-   "segment_id": "559374638_559374639_0",
-   "highway": "residential",
-   "gain_veh_h_day": 26.15,
-   "dist_to_tram_km": 2.19,
-   "on_baseline_path": true,
-   "gain_positive(신경로 등장)": true,
-   "suspect_flag": false
-  },
-  {
-   "segment_id": "559374637_559374639_0",
-   "highway": "residential",
-   "gain_veh_h_day": 21.28,
-   "dist_to_tram_km": 2.17,
    "on_baseline_path": true,
    "gain_positive(신경로 등장)": true,
    "suspect_flag": false
@@ -187,6 +178,15 @@
    "highway": "residential",
    "gain_veh_h_day": 18.14,
    "dist_to_tram_km": 5.81,
+   "on_baseline_path": true,
+   "gain_positive(신경로 등장)": true,
+   "suspect_flag": false
+  },
+  {
+   "segment_id": "315811483_559374638_0",
+   "highway": "residential",
+   "gain_veh_h_day": 17.71,
+   "dist_to_tram_km": 2.23,
    "on_baseline_path": true,
    "gain_positive(신경로 등장)": true,
    "suspect_flag": false
