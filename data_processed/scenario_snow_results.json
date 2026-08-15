@@ -12,23 +12,23 @@
  },
  "delay": {
   "headline": {
-   "weighted_mean_delay_min": 4.812,
-   "top10pct_weighted_delay_min": 10.827,
+   "weighted_mean_delay_min": 4.802,
+   "top10pct_weighted_delay_min": 10.869,
    "p95_weighted_delay_min": 9.869,
-   "n_pairs": 2947
+   "n_pairs": 3019
   },
   "by_category": {
    "same_zone": {
-    "weighted_mean_delay_min": 4.982,
-    "top10pct_weighted_delay_min": 10.242,
+    "weighted_mean_delay_min": 4.964,
+    "top10pct_weighted_delay_min": 10.295,
     "p95_weighted_delay_min": 10.177,
-    "n_pairs": 482
+    "n_pairs": 492
    },
    "inter_zone": {
-    "weighted_mean_delay_min": 5.972,
-    "top10pct_weighted_delay_min": 10.987,
+    "weighted_mean_delay_min": 5.966,
+    "top10pct_weighted_delay_min": 10.983,
     "p95_weighted_delay_min": 10.582,
-    "n_pairs": 2398
+    "n_pairs": 2460
    },
    "external": {
     "weighted_mean_delay_min": 3.937,
@@ -40,7 +40,7 @@
   "n_skipped": 5
  },
  "greedy": {
-  "baseline_objective_veh_h_day": 51693.6,
+  "baseline_objective_veh_h_day": 51572.8,
   "picks": [
    {
     "segment_id": "559374632_559374639_0",
@@ -60,7 +60,7 @@
     "segment_id": "318361357_559374636_0",
     "highway": "residential",
     "length_m": 412.8,
-    "marginal_gain_veh_h_day": 58.85,
+    "marginal_gain_veh_h_day": 60.05,
     "coord_a": [
      36.3331268,
      127.3865692
@@ -74,7 +74,7 @@
     "segment_id": "559374637_559374639_0",
     "highway": "residential",
     "length_m": 133.4,
-    "marginal_gain_veh_h_day": 51.24,
+    "marginal_gain_veh_h_day": 51.3,
     "coord_a": [
      36.3353942,
      127.3828788
@@ -99,40 +99,40 @@
     ]
    },
    {
-    "segment_id": "388475791_388475837_0",
+    "segment_id": "2024731262_2024731278_0",
     "highway": "residential",
-    "length_m": 1215.8,
-    "marginal_gain_veh_h_day": 42.95,
+    "length_m": 268.4,
+    "marginal_gain_veh_h_day": 30.78,
     "coord_a": [
-     36.3011641,
-     127.41771
+     36.2681182,
+     127.474551
     ],
     "coord_b": [
-     36.3081332,
-     127.4110638
+     36.2687232,
+     127.4718345
     ]
    }
   ],
   "trajectory": {
    "K=1": {
-    "objective_veh_h_day": 51599.2,
+    "objective_veh_h_day": 51478.4,
     "improvement_pct": 0.183,
     "saved_abs_veh_min_day": 5664.0
    },
    "K=2": {
-    "objective_veh_h_day": 51540.3,
-    "improvement_pct": 0.296,
-    "saved_abs_veh_min_day": 9196.0
+    "objective_veh_h_day": 51418.4,
+    "improvement_pct": 0.299,
+    "saved_abs_veh_min_day": 9267.0
    },
    "K=3": {
-    "objective_veh_h_day": 51489.1,
-    "improvement_pct": 0.396,
-    "saved_abs_veh_min_day": 12270.0
+    "objective_veh_h_day": 51367.1,
+    "improvement_pct": 0.399,
+    "saved_abs_veh_min_day": 12345.0
    },
    "K=5": {
-    "objective_veh_h_day": 51398.3,
-    "improvement_pct": 0.571,
-    "saved_abs_veh_min_day": 17717.0
+    "objective_veh_h_day": 51288.5,
+    "improvement_pct": 0.551,
+    "saved_abs_veh_min_day": 17062.0
    }
   },
   "upgrade_assumption": "[가정치] travel_time -30%"
@@ -149,7 +149,7 @@
   {
    "segment_id": "318361357_559374636_0",
    "highway": "residential",
-   "gain_veh_h_day": 58.85,
+   "gain_veh_h_day": 60.05,
    "adjacent_to_high_reduction_class": true,
    "on_baseline_path": true,
    "suspect_flag": false
@@ -163,17 +163,9 @@
    "suspect_flag": false
   },
   {
-   "segment_id": "388475791_388475837_0",
-   "highway": "residential",
-   "gain_veh_h_day": 42.95,
-   "adjacent_to_high_reduction_class": true,
-   "on_baseline_path": true,
-   "suspect_flag": false
-  },
-  {
    "segment_id": "559374639_11993592727_0",
    "highway": "residential",
-   "gain_veh_h_day": 34.51,
+   "gain_veh_h_day": 34.3,
    "adjacent_to_high_reduction_class": true,
    "on_baseline_path": true,
    "suspect_flag": false
@@ -217,12 +209,20 @@
    "adjacent_to_high_reduction_class": true,
    "on_baseline_path": true,
    "suspect_flag": false
+  },
+  {
+   "segment_id": "4838045464_4838045469_0",
+   "highway": "residential",
+   "gain_veh_h_day": 25.98,
+   "adjacent_to_high_reduction_class": true,
+   "on_baseline_path": true,
+   "suspect_flag": false
   }
  ],
  "audit_note": "[가정치] 인접 기준을 '-40% 등급 간선과 노드 공유'로 대체 — 후보가 대부분 residential(-40% 등급)이라 이 기준의 판별력은 낮음",
  "flow_validation": {
-  "spearman_load_vs_congestion": -0.049,
-  "n_common_roads": 106,
+  "spearman_load_vs_congestion": -0.085,
+  "n_common_roads": 108,
   "congestion_direction": "[검증됨] 숫자 클수록 정체"
  }
 }

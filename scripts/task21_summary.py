@@ -12,12 +12,25 @@ tram = load("scenario_tram_results.json")
 snow = load("scenario_snow_results.json")
 retail = load("scenario_retail_closure_results.json")
 ys = load("scenario_yuseong_results.json")
+od_pairs = load("od_decomposed.json")["pairs"]
+base_times = load("baseline_times.json")["times_s"]
+
+def od_weighted_mean_min(pairs, times):
+    ws = ts = 0.0
+    for p in pairs:
+        t = times.get(f"{p['o']}_{p['d']}")
+        if t is None:
+            continue
+        ws += p["veh_day"]; ts += p["veh_day"] * t
+    return ts / ws / 60
+
+base_mean_min = od_weighted_mean_min(od_pairs, base_times)
 
 th = tram["task_D_tram_scenario"]["headline"]
 sh = snow["delay"]["headline"]
 summary = {
     "framing": "의사결정 지원용 what-if 분석 (검증된 예측 모델 아님)",
-    "baseline": "평시 OD가중 평균 11.94분 (2,952 OD쌍, 창고43×행정동82+게이트웨이)",
+    "baseline": f"평시 OD가중 평균 {base_mean_min:.2f}분 ({len(od_pairs):,} OD쌍, 창고43×행정동82+게이트웨이)",
     "scenarios": {
         "1_트램공사": {
             "shock": "14개 전 공구 공사 중(확인 사실) — 지점 반경 500m 간선 ×2.0 [가정치]",

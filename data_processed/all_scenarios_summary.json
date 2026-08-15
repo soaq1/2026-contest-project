@@ -1,38 +1,38 @@
 {
  "framing": "의사결정 지원용 what-if 분석 (검증된 예측 모델 아님)",
- "baseline": "평시 OD가중 평균 11.94분 (2,952 OD쌍, 창고43×행정동82+게이트웨이)",
+ "baseline": "평시 OD가중 평균 11.91분 (3,024 OD쌍, 창고43×행정동82+게이트웨이)",
  "scenarios": {
   "1_트램공사": {
    "shock": "14개 전 공구 공사 중(확인 사실) — 지점 반경 500m 간선 ×2.0 [가정치]",
-   "headline_delay_min": 0.594,
-   "tail_top10pct_min": 3.881,
+   "headline_delay_min": 0.588,
+   "tail_top10pct_min": 3.878,
    "p95_min": 2.418,
    "3단분해": {
-    "same_zone": 0.675,
-    "inter_zone": 0.964,
+    "same_zone": 0.659,
+    "inter_zone": 0.972,
     "external": 0.278
    },
    "greedy_K5": {
-    "objective_veh_h_day": 38458.8,
-    "improvement_pct": 0.576,
-    "saved_abs_veh_min_day": 13364.0
+    "objective_veh_h_day": 38350.0,
+    "improvement_pct": 0.577,
+    "saved_abs_veh_min_day": 13348.0
    },
    "key_finding": "존간(도심 회랑) 타격 최대. greedy 5개가 우회 회랑 형성, 의심 사례 0건"
   },
   "2_폭설": {
    "shock": "등급별 차등 속도저하 -15/-25/-40% 전역 [가정치, 근거 문헌 없음]",
-   "headline_delay_min": 4.812,
-   "tail_top10pct_min": 10.827,
+   "headline_delay_min": 4.802,
+   "tail_top10pct_min": 10.869,
    "p95_min": 9.869,
    "3단분해": {
-    "same_zone": 4.982,
-    "inter_zone": 5.972,
+    "same_zone": 4.964,
+    "inter_zone": 5.966,
     "external": 3.937
    },
    "greedy_K5": {
-    "objective_veh_h_day": 51398.3,
-    "improvement_pct": 0.571,
-    "saved_abs_veh_min_day": 17717.0
+    "objective_veh_h_day": 51288.5,
+    "improvement_pct": 0.551,
+    "saved_abs_veh_min_day": 17062.0
    },
    "key_finding": "전역 충격이라 지연 절대값이 시나리오 중 최대"
   },
@@ -58,9 +58,9 @@
     }
    ],
    "greedy_K5": {
-    "objective_veh_h_day": 36529.8,
-    "improvement_pct": 0.614,
-    "saved_abs_veh_min_day": 13534.0
+    "objective_veh_h_day": 36446.7,
+    "improvement_pct": 0.594,
+    "saved_abs_veh_min_day": 13076.0
    },
    "key_finding": "폐점 인근 접근로의 화물 의존도 감소 — 상위 감소 구간이 지점 주변에 국지화"
   },

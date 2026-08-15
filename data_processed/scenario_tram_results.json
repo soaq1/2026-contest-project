@@ -8,23 +8,23 @@
    "n_skipped_od": 5
   },
   "headline": {
-   "weighted_mean_delay_min": 0.594,
-   "top10pct_weighted_delay_min": 3.881,
+   "weighted_mean_delay_min": 0.588,
+   "top10pct_weighted_delay_min": 3.878,
    "p95_weighted_delay_min": 2.418,
-   "n_pairs": 2947
+   "n_pairs": 3019
   },
   "by_category_3단분해": {
    "same_zone": {
-    "weighted_mean_delay_min": 0.675,
-    "top10pct_weighted_delay_min": 3.164,
+    "weighted_mean_delay_min": 0.659,
+    "top10pct_weighted_delay_min": 3.124,
     "p95_weighted_delay_min": 2.782,
-    "n_pairs": 482
+    "n_pairs": 492
    },
    "inter_zone": {
-    "weighted_mean_delay_min": 0.964,
-    "top10pct_weighted_delay_min": 3.982,
+    "weighted_mean_delay_min": 0.972,
+    "top10pct_weighted_delay_min": 3.974,
     "p95_weighted_delay_min": 4.144,
-    "n_pairs": 2398
+    "n_pairs": 2460
    },
    "external": {
     "weighted_mean_delay_min": 0.278,
@@ -41,13 +41,13 @@
    "upgrade": "[가정치] 현재 travel_time × 0.7 (30% 감소, 민감도 분석 대상)",
    "audit_rule": "[가정치] 트램 2km 이내 & 베이스라인 경로 등장 기준"
   },
-  "baseline_objective_veh_h_day": 38681.6,
+  "baseline_objective_veh_h_day": 38572.5,
   "greedy_picks": [
    {
     "segment_id": "318361357_559374636_0",
     "highway": "residential",
     "length_m": 412.8,
-    "marginal_gain_veh_h_day": 57.09,
+    "marginal_gain_veh_h_day": 57.3,
     "coord_a": [
      36.3331268,
      127.3865692
@@ -75,7 +75,7 @@
     "segment_id": "317557160_436781183_0",
     "highway": "residential",
     "length_m": 213.4,
-    "marginal_gain_veh_h_day": 38.51,
+    "marginal_gain_veh_h_day": 38.86,
     "coord_a": [
      36.3719889,
      127.4242633
@@ -89,7 +89,7 @@
     "segment_id": "340162555_436781183_0",
     "highway": "residential",
     "length_m": 187.9,
-    "marginal_gain_veh_h_day": 37.08,
+    "marginal_gain_veh_h_day": 37.3,
     "coord_a": [
      36.3738263,
      127.4261456
@@ -103,7 +103,7 @@
     "segment_id": "559374637_559374639_0",
     "highway": "residential",
     "length_m": 133.4,
-    "marginal_gain_veh_h_day": 33.41,
+    "marginal_gain_veh_h_day": 32.37,
     "coord_a": [
      36.3353942,
      127.3828788
@@ -116,31 +116,31 @@
   ],
   "objective_trajectory": {
    "K=1": {
-    "objective_veh_h_day": 38624.5,
-    "improvement_pct": 0.148,
-    "saved_abs_veh_min_day": 3425.0
+    "objective_veh_h_day": 38515.2,
+    "improvement_pct": 0.149,
+    "saved_abs_veh_min_day": 3438.0
    },
    "K=2": {
-    "objective_veh_h_day": 38567.8,
-    "improvement_pct": 0.294,
-    "saved_abs_veh_min_day": 6824.0
+    "objective_veh_h_day": 38458.5,
+    "improvement_pct": 0.295,
+    "saved_abs_veh_min_day": 6837.0
    },
    "K=3": {
-    "objective_veh_h_day": 38529.3,
-    "improvement_pct": 0.394,
-    "saved_abs_veh_min_day": 9135.0
+    "objective_veh_h_day": 38419.7,
+    "improvement_pct": 0.396,
+    "saved_abs_veh_min_day": 9168.0
    },
    "K=5": {
-    "objective_veh_h_day": 38458.8,
-    "improvement_pct": 0.576,
-    "saved_abs_veh_min_day": 13364.0
+    "objective_veh_h_day": 38350.0,
+    "improvement_pct": 0.577,
+    "saved_abs_veh_min_day": 13348.0
    }
   },
   "posthoc_audit_top10": [
    {
     "segment_id": "318361357_559374636_0",
     "highway": "residential",
-    "gain_veh_h_day": 57.09,
+    "gain_veh_h_day": 57.3,
     "dist_to_tram_km": 2.04,
     "on_baseline_path": true,
     "gain_positive(신경로 등장)": true,
@@ -158,7 +158,7 @@
    {
     "segment_id": "317557160_436781183_0",
     "highway": "residential",
-    "gain_veh_h_day": 38.51,
+    "gain_veh_h_day": 38.86,
     "dist_to_tram_km": 0.35,
     "on_baseline_path": true,
     "gain_positive(신경로 등장)": true,
@@ -167,7 +167,7 @@
    {
     "segment_id": "340162555_436781183_0",
     "highway": "residential",
-    "gain_veh_h_day": 33.7,
+    "gain_veh_h_day": 34.0,
     "dist_to_tram_km": 0.29,
     "on_baseline_path": true,
     "gain_positive(신경로 등장)": true,
@@ -185,7 +185,7 @@
    {
     "segment_id": "4838045464_4838045469_0",
     "highway": "residential",
-    "gain_veh_h_day": 27.31,
+    "gain_veh_h_day": 27.51,
     "dist_to_tram_km": 0.91,
     "on_baseline_path": true,
     "gain_positive(신경로 등장)": true,
@@ -194,17 +194,8 @@
    {
     "segment_id": "559374638_559374639_0",
     "highway": "residential",
-    "gain_veh_h_day": 26.33,
+    "gain_veh_h_day": 26.15,
     "dist_to_tram_km": 2.19,
-    "on_baseline_path": true,
-    "gain_positive(신경로 등장)": true,
-    "suspect_flag": false
-   },
-   {
-    "segment_id": "388475791_388475837_0",
-    "highway": "residential",
-    "gain_veh_h_day": 25.77,
-    "dist_to_tram_km": 2.47,
     "on_baseline_path": true,
     "gain_positive(신경로 등장)": true,
     "suspect_flag": false
@@ -212,7 +203,7 @@
    {
     "segment_id": "559374637_559374639_0",
     "highway": "residential",
-    "gain_veh_h_day": 22.11,
+    "gain_veh_h_day": 21.28,
     "dist_to_tram_km": 2.17,
     "on_baseline_path": true,
     "gain_positive(신경로 등장)": true,
@@ -226,6 +217,15 @@
     "on_baseline_path": true,
     "gain_positive(신경로 등장)": true,
     "suspect_flag": false
+   },
+   {
+    "segment_id": "436793281_802043632_0",
+    "highway": "residential",
+    "gain_veh_h_day": 18.14,
+    "dist_to_tram_km": 5.81,
+    "on_baseline_path": true,
+    "gain_positive(신경로 등장)": true,
+    "suspect_flag": false
    }
   ],
   "n_suspect": 0
@@ -234,29 +234,29 @@
   "meta": {
    "limitation": "[한계] 교통링크에 좌표가 없어 도로명 단위 평균으로만 비교 — 링크 단위 검증 불가",
    "congestion_direction": "[검증됨] 역산 확인: 1=원활(평균 42.7km/h)/2=서행(20.2)/3=정체(9.7), speed와 피어슨 -0.503 — 숫자 클수록 정체. 따라서 부하-혼잡 상관의 부호 해석은 재해석 불필요(음수 = 부하가 덜 정체된 도로에 몰림)",
-   "n_common_roads": 118
+   "n_common_roads": 116
   },
-  "spearman_load_vs_congestion": -0.107,
-  "spearman_load_vs_speed": 0.242,
+  "spearman_load_vs_congestion": -0.073,
+  "spearman_load_vs_speed": 0.236,
   "by_highway_class": {
    "secondary": {
     "n_roads": 34,
-    "rho_congestion": -0.405
+    "rho_congestion": -0.31
    },
    "tertiary": {
-    "n_roads": 31,
-    "rho_congestion": 0.067
+    "n_roads": 29,
+    "rho_congestion": 0.123
    },
    "residential": {
-    "n_roads": 26,
-    "rho_congestion": 0.017
+    "n_roads": 25,
+    "rho_congestion": 0.048
    },
    "primary": {
-    "n_roads": 17,
-    "rho_congestion": -0.205
+    "n_roads": 18,
+    "rho_congestion": -0.34
    }
   },
-  "load_share_on_matched_edges_pct": 36.5
+  "load_share_on_matched_edges_pct": 36.1
  },
  "pipeline_inputs": {
   "graph": "daejeon_weighted.graphml (실측 매칭 23.6% / imputation 76.4% [가정치])",
